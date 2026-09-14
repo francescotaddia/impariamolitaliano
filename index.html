@@ -776,17 +776,23 @@ function startListening(item, onDone, langOverride){
   try{ rec = new SR(); }catch(e){ onDone(false, 'unsupported'); return; }
   rec.lang = langOverride || (LANGS[L()]||LANGS.it).bcp47;
   rec.maxAlternatives = 3;
-  rec.interimResults = false;
+  rec.interimResults = true;
   state.listening = true;
   render();
   let done = false;
+  let bestInterim = [];
   rec.onresult = (e) => {
-    done = true;
-    state.listening = false;
-    const alts = Array.from(e.results[0]).map(r => r.transcript);
-    const ok = alts.some(a => matches(a, item));
-    showVoiceDebug('VOICE DEBUG\ncercavo: "' + item.w + '" (accetta: ' + (item.accepts||[item.w]).join(', ') + ')\nho sentito: ' + alts.map(a=>'"'+a+'"').join(' | ') + '\nrisultato: ' + (ok?'CORRETTO':'non corrisponde'));
-    onDone(ok, null);
+    const last = e.results[e.results.length - 1];
+    const alts = Array.from(last).map(r => r.transcript);
+    if(last.isFinal){
+      done = true;
+      state.listening = false;
+      const ok = alts.some(a => matches(a, item));
+      showVoiceDebug('VOICE DEBUG (finale)\ncercavo: "' + item.w + '" (accetta: ' + (item.accepts||[item.w]).join(', ') + ')\nho sentito: ' + alts.map(a=>'"'+a+'"').join(' | ') + '\nrisultato: ' + (ok?'CORRETTO':'non corrisponde'));
+      onDone(ok, null);
+    } else {
+      bestInterim = alts;
+    }
   };
   rec.onerror = (e) => {
     if(done) return;
@@ -798,8 +804,9 @@ function startListening(item, onDone, langOverride){
   rec.onend = () => {
     if(!done){
       state.listening = false;
-      showVoiceDebug('VOICE DEBUG\ncercavo: "' + item.w + '"\nNESSUN RISULTATO (onend senza onresult)');
-      onDone(false, 'no-speech');
+      const ok = bestInterim.some(a => matches(a, item));
+      showVoiceDebug('VOICE DEBUG (provvisorio, mai diventato definitivo)\ncercavo: "' + item.w + '"\nho sentito: ' + (bestInterim.length ? bestInterim.map(a=>'"'+a+'"').join(' | ') : 'NIENTE') + '\nrisultato: ' + (ok?'CORRETTO':'non corrisponde'));
+      onDone(ok, ok ? null : 'no-speech');
     }
   };
   try{ rec.start(); }catch(e){ state.listening = false; onDone(false, 'unsupported'); }
