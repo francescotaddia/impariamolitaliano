@@ -940,8 +940,11 @@ window.addEventListener('keydown', (e) => {
     lastNavAt = now;
     moveFocus(key);
   } else if(key === 'Enter' || key === ' ' || e.keyCode === 13 || e.keyCode === 29443){
-    e.preventDefault();
     const el = currentFocused();
+    if(el && el.tagName === 'BUTTON'){
+      return;
+    }
+    e.preventDefault();
     if(el) el.click();
   } else if(key === 'Backspace' || key === 'Escape' || key === 'GoBack' || e.keyCode === 10009 || e.keyCode === 8){
     e.preventDefault(); goBack();
