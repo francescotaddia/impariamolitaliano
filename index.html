@@ -232,7 +232,6 @@ canvas#confetti{ position:fixed; inset:0; pointer-events:none; z-index:51;}
 
 <div id="app"></div>
 <canvas id="confetti"></canvas>
-<div id="debugPanel" style="position:fixed;top:5%;left:5%;right:5%;background:#FF0000;color:#FFFFFF;font-family:monospace;font-weight:900;font-size:22px;padding:20px;z-index:999999;border:8px solid yellow;white-space:pre-wrap;">DEBUG v4 - IN ATTESA DI UN TASTO O MOVIMENTO...</div>
 
 <script>
 /* ================= LANGUAGES ================= */
@@ -809,6 +808,8 @@ function focusables(){
   return Array.from(document.querySelectorAll('[data-focusable]')).filter(el => el.offsetParent !== null);
 }
 function currentFocused(){
+  const active = document.activeElement;
+  if(active && active.matches && active.matches('[data-focusable]')) return active;
   return document.querySelector('[data-focusable].focused') || focusables()[0];
 }
 function setFocus(el){
@@ -819,6 +820,13 @@ function setFocus(el){
     try{ el.focus({preventScroll:true}); }catch(e){ try{ el.focus(); }catch(e2){} }
   }
 }
+document.addEventListener('focusin', (e) => {
+  const t = e.target;
+  if(t && t.matches && t.matches('[data-focusable]')){
+    focusables().forEach(f => { if(f !== t) f.classList.remove('focused'); });
+    t.classList.add('focused');
+  }
+});
 function moveFocus(dir){
   const all = focusables();
   if(!all.length) return;
