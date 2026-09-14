@@ -777,6 +777,7 @@ function startListening(item, onDone, langOverride){
   rec.lang = langOverride || (LANGS[L()]||LANGS.it).bcp47;
   rec.maxAlternatives = 3;
   rec.interimResults = true;
+  rec.continuous = true;
   state.listening = true;
   render();
   let done = false;
@@ -809,7 +810,8 @@ function startListening(item, onDone, langOverride){
       onDone(ok, ok ? null : 'no-speech');
     }
   };
-  try{ rec.start(); }catch(e){ state.listening = false; onDone(false, 'unsupported'); }
+  try{ rec.start(); }catch(e){ state.listening = false; onDone(false, 'unsupported'); return; }
+  setTimeout(() => { if(!done){ try{ rec.stop(); }catch(e){} } }, 5000);
 }
 
 /* ================= CONFETTI ================= */
