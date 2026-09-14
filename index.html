@@ -1,0 +1,1312 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}</style></head><body>
+<title>Impariamo l'Italiano</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@600;700;800;900&family=Cairo:wght@600;700;800;900&display=swap');
+
+:root{
+  --bg: #FFF6E9;
+  --bg-card: #FFFFFF;
+  --ink: #331E5C;
+  --ink-soft: #6B5B95;
+  --primary: #FF6F5E;
+  --primary-deep: #E5493A;
+  --secondary: #3DA9FC;
+  --yellow: #FFC93C;
+  --green: #4FBE7A;
+  --purple: #A66CFF;
+  --pink: #FF8FC7;
+  --focus-ring: #FFC93C;
+  --shadow: 0 10px 0 rgba(51,30,92,0.12);
+}
+
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  background: var(--bg);
+  background-image:
+    radial-gradient(circle at 8% 12%, rgba(255,201,60,0.35) 0, transparent 40%),
+    radial-gradient(circle at 92% 88%, rgba(61,169,252,0.25) 0, transparent 45%),
+    radial-gradient(circle at 90% 10%, rgba(166,108,255,0.2) 0, transparent 40%);
+  color: var(--ink);
+  font-family: 'Nunito', sans-serif;
+  overflow: hidden;
+  -webkit-user-select:none; user-select:none;
+}
+#app{
+  width:100vw; height:100vh;
+  padding: 4.5vh 4.5vw;
+  display:flex; flex-direction:column;
+  position:relative;
+}
+h1,h2,h3{
+  font-family:'Baloo 2', sans-serif;
+  margin:0;
+  text-wrap: balance;
+}
+.eyebrow{
+  font-family:'Nunito';
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color: var(--ink-soft);
+  font-size: 1.1vw;
+}
+button{ font-family:inherit; }
+.lang-ar, .lang-ar h1, .lang-ar h2, .lang-ar h3, .lang-ar button, .lang-ar input, .lang-ar div{ font-family:'Cairo', 'Nunito', sans-serif; }
+[dir="rtl"] .choice-tile.sentence-tile{ text-align:start; }
+.stimulus{ direction: ltr; }
+
+/* ---------- focusable tiles ---------- */
+.tile{
+  border:none;
+  border-radius: 28px;
+  cursor:pointer;
+}
+[data-focusable]{
+  transition: transform .12s ease, box-shadow .12s ease;
+  outline:none;
+}
+[data-focusable]:focus-visible, [data-focusable].focused{
+  transform: scale(1.06);
+  box-shadow: 0 0 0 6px var(--focus-ring), var(--shadow);
+  z-index:2;
+}
+
+/* ---------- HOME ---------- */
+.home{ display:flex; flex-direction:column; height:100%; gap: 2.2vh;}
+.home-top{ display:flex; justify-content:space-between; align-items:flex-start;}
+.home-title{ font-size: 4.4vw; color:var(--primary-deep); line-height:1.05;}
+.home-title span{ color: var(--purple);}
+.home-sub{ font-size:1.5vw; color:var(--ink-soft); font-weight:700; margin-top:.5vh;}
+.home-top-right{ display:flex; align-items:center; gap:1vw; }
+.lang-switch{ display:flex; gap:.7vw; }
+.lang-flag{
+  font-size:1.7vw; background:var(--bg-card); box-shadow:var(--shadow);
+  width:3.4vw; height:3.4vw; min-width:46px; min-height:46px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+}
+.lang-flag.active{ box-shadow:0 0 0 4px var(--secondary), var(--shadow); }
+.settings-btn{
+  background: var(--bg-card);
+  width: 4.2vw; height:4.2vw; min-width:56px; min-height:56px;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:2vw;
+  box-shadow: var(--shadow);
+}
+.home-grid{
+  flex:1;
+  display:grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 1.6vw;
+}
+.cat-tile{
+  background: var(--bg-card);
+  box-shadow: var(--shadow);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:.4vh;
+  padding: 1vh .5vw;
+  position:relative;
+}
+.cat-tile .emoji{ font-size: 3.4vw; }
+.cat-tile .label{ font-weight:800; font-size:1.15vw; color:var(--ink); text-align:center;}
+.cat-tile .stars{ font-size:.9vw; color: var(--yellow); font-weight:800;}
+.home-footer{ display:flex; gap:1.4vw; }
+.pill-btn{
+  background: var(--secondary);
+  color:white; font-weight:900; font-size:1.3vw;
+  padding: 1.6vh 2vw; border-radius: 999px;
+  box-shadow: var(--shadow);
+  display:flex; align-items:center; gap:.6vw;
+}
+.pill-btn.challenge{ background: var(--pink); }
+.pill-btn.challenge.active{ background: var(--green); }
+
+/* ---------- CATEGORY / QUIZ ---------- */
+.screen{ display:flex; flex-direction:column; height:100%; }
+.top-bar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:2vh;}
+.back-btn{
+  background: var(--bg-card); box-shadow: var(--shadow);
+  border-radius: 999px; padding: 1.2vh 1.6vw; font-weight:900; font-size:1.3vw;
+  display:flex; align-items:center; gap:.5vw;
+}
+.progress-dots{ display:flex; gap:.5vw; }
+.progress-dots .dot{ width:1vw; height:1vw; border-radius:50%; background:#E8E1F5; }
+.progress-dots .dot.done{ background: var(--green); }
+.progress-dots .dot.current{ background: var(--yellow); }
+.mode-switch{ display:flex; gap:.6vw; }
+.mode-pill{
+  background: var(--bg-card); box-shadow: var(--shadow);
+  border-radius: 999px; padding: 1vh 1.2vw; font-weight:800; font-size:1vw; color:var(--ink-soft);
+}
+.mode-pill.active{ background: var(--secondary); color:white; }
+.mode-pill.disabled{ opacity:.4; }
+
+.quiz-wrap{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 3vh; position:relative;}
+.quiz-lang-flag{
+  position:absolute; top:-2vh; right:1vw;
+  font-size:5vw; line-height:1;
+  filter: drop-shadow(0 6px 0 rgba(51,30,92,0.12));
+  pointer-events:none;
+}
+.avatar-row{ display:flex; gap:3vw; align-items:center; }
+.avatar{ display:flex; flex-direction:column; align-items:center; gap:.5vh; opacity:.45; transition:opacity .2s, transform .2s; }
+.avatar.active{ opacity:1; transform: scale(1.12);}
+.avatar .pic{ width:5.2vw; height:5.2vw; border-radius:50%; background:var(--bg-card); box-shadow:var(--shadow); display:flex; align-items:center; justify-content:center; font-size:2.6vw; overflow:hidden; }
+.avatar .pic img{ width:100%; height:100%; object-fit:cover; }
+.avatar .name{ font-weight:900; font-size:1.05vw; }
+.avatar .score{ font-size:1vw; color:var(--yellow); font-weight:800; }
+
+.stimulus{
+  font-size: 12vw;
+  line-height:1;
+  filter: drop-shadow(0 12px 0 rgba(51,30,92,0.08));
+}
+.stimulus-sentence{ font-size: 7vw; letter-spacing: .4vw; }
+.stimulus-label{ font-size:1.3vw; color:var(--ink-soft); font-weight:800;}
+
+.voice-controls{ display:flex; gap:2vw; }
+.round-btn{
+  background: var(--bg-card); box-shadow: var(--shadow);
+  border-radius: 999px; padding: 1.6vh 2.4vw;
+  font-size:1.4vw; font-weight:900; display:flex; align-items:center; gap:.7vw;
+}
+.round-btn.mic{ background: var(--primary); color:white; }
+.round-btn.mic.listening{ animation: pulse 1s infinite; background: var(--primary-deep); }
+@keyframes pulse{ 0%{box-shadow:0 0 0 0 rgba(229,73,58,.5), var(--shadow);} 70%{box-shadow:0 0 0 22px rgba(229,73,58,0), var(--shadow);} 100%{box-shadow:0 0 0 0 rgba(229,73,58,0), var(--shadow);} }
+
+.choice-row{ display:flex; gap:2vw; }
+.choice-tile{
+  background: var(--bg-card); box-shadow: var(--shadow);
+  border-radius: 24px; padding: 2vh 2vw; min-width:12vw;
+  display:flex; flex-direction:column; align-items:center; gap:.8vh;
+  font-size:1.5vw; font-weight:800;
+}
+.choice-tile .emoji{ font-size:3vw; }
+.choice-row-sentence{ flex-direction:column; align-items:stretch; width:56vw; gap:1.4vh; }
+.choice-tile.sentence-tile{
+  flex-direction:row; justify-content:flex-start; text-align:left;
+  font-size:1.35vw; padding:1.8vh 2.2vw; min-width:0;
+}
+
+.hint-banner{
+  position:absolute; top:-1vh;
+  background: var(--yellow); color:var(--ink);
+  padding: .8vh 1.6vw; border-radius:999px; font-weight:800; font-size:1.1vw;
+  box-shadow: var(--shadow);
+}
+
+/* ---------- CELEBRATION ---------- */
+.celebrate-overlay{
+  position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:2vh; background: rgba(255,246,233,0.92); z-index:50;
+}
+.celebrate-emoji{ font-size:14vw; animation: bounce .6s ease infinite alternate; }
+@keyframes bounce{ from{ transform: translateY(0) rotate(-4deg);} to{ transform: translateY(-2vh) rotate(4deg);} }
+.celebrate-text{ font-size:4vw; color:var(--primary-deep); font-family:'Baloo 2'; }
+canvas#confetti{ position:fixed; inset:0; pointer-events:none; z-index:51;}
+
+/* ---------- SETTINGS ---------- */
+.settings-form{ display:flex; flex-direction:column; gap:2.2vh; max-width:50vw; }
+.field label{ display:block; font-weight:900; margin-bottom:.6vh; font-size:1.15vw; color:var(--ink-soft); }
+.field input[type=text]{
+  width:100%; font-size:1.4vw; padding:1.4vh 1.2vw; border-radius:16px; border:3px solid #E8E1F5;
+  font-family:'Nunito'; font-weight:700; background:var(--bg-card); color:var(--ink);
+}
+.field input[type=text]:focus{ outline:none; border-color: var(--focus-ring); }
+.photo-row{ display:flex; gap:1.4vw; align-items:center; }
+.photo-preview{ width:5vw; height:5vw; border-radius:50%; background:#E8E1F5; display:flex; align-items:center; justify-content:center; font-size:2.4vw; overflow:hidden; }
+.photo-preview img{ width:100%; height:100%; object-fit:cover; }
+.upload-btn{ background: var(--secondary); color:white; font-weight:900; padding:1.2vh 1.6vw; border-radius:999px; font-size:1.1vw; }
+.toggle-row{ display:flex; align-items:center; gap:1vw; }
+.toggle{
+  width:4vw; height:2.2vw; border-radius:999px; background:#E8E1F5; position:relative; transition:background .2s;
+}
+.toggle.on{ background: var(--green); }
+.toggle::after{ content:''; position:absolute; top:.25vw; left:.25vw; width:1.7vw; height:1.7vw; border-radius:50%; background:white; transition:left .2s; }
+.toggle.on::after{ left: 2.05vw; }
+.mic-status{ font-size:1vw; color:var(--ink-soft); font-weight:700; }
+</style>
+
+<div id="app"></div>
+<canvas id="confetti"></canvas>
+
+<script>
+/* ================= LANGUAGES ================= */
+const LANGS = {
+  it: {label:'Italiano', flag:'🇮🇹', bcp47:'it-IT', dir:'ltr'},
+  en: {label:'English', flag:'🇬🇧', bcp47:'en-GB', dir:'ltr'},
+  sv: {label:'Svenska', flag:'🇸🇪', bcp47:'sv-SE', dir:'ltr'},
+  fr: {label:'Français', flag:'🇫🇷', bcp47:'fr-FR', dir:'ltr'},
+  ar: {label:'العربية', flag:'🇮🇶', bcp47:'ar-SA', dir:'rtl'}
+};
+
+/* ================= DATA ================= */
+/* ================= UI STRINGS ================= */
+const UI = {
+  it: {
+    eyebrow:'Impariamo insieme',
+    greeting:(n)=>`Ciao ${n}! 🌈`,
+    subtitle:"Scegli un gioco con le frecce del telecomando",
+    challengeLabel:'Sfida', back:'Indietro',
+    questionWord:"Cos'è questo?", questionSentence:'Racconta la frase!',
+    listen:'Ascolta', tryVoice:'Prova tu', listening:'Ti ascolto...',
+    micHintWord:'Prova a dire il nome ad alta voce!', micHintSentence:'Prova a dire la frase ad alta voce!',
+    modeChoice:'Scelta', modeVoice:'Voce',
+    finished:(c)=>`Hai finito ${c}!`, replay:'Rigioca', home:'Home',
+    settingsTitle:'Impostazioni',
+    childNameLabel:'Nome della bambina', uploadChildPhoto:'Carica foto bambina',
+    mammaNameLabel:'Nome della mamma', uploadMammaPhoto:'Carica foto mamma',
+    papaNameLabel:'Nome del papà', uploadPapaPhoto:'Carica foto papà', playsInChallenge:'Partecipa alla sfida',
+    startModeLabel:'Modalità di partenza dei quiz',
+    modeHint:'Potete comunque cambiare modalità in qualsiasi momento durante il gioco, domanda per domanda.',
+    micAvailable:'🎤 Microfono disponibile in questo browser.',
+    micUnavailable:'⚠️ Il microfono non è disponibile in questo browser: resterà attiva la modalità a scelta multipla.',
+    micUnavailableToast:'Il microfono non è disponibile su questo browser.',
+    resetStars:'🗑️ Azzera stelle',
+    categories:{animali:'Animali', halloween:'Halloween', ghiaccio:'Ghiaccio e Neve', cielo:'Sole e Luna', unicorni:'Unicorni', colori:'Colori', numeri:'Numeri', lettere:'Lettere', fiori:'Fiori', principesse:'Principesse', dinosauri:'Dinosauri', frasi:'Frasi'}
+  },
+  en: {
+    eyebrow:"Let's learn together",
+    greeting:(n)=>`Hi ${n}! 🌈`,
+    subtitle:"Pick a game with the remote's arrow keys",
+    challengeLabel:'Challenge', back:'Back',
+    questionWord:'What is this?', questionSentence:'Tell the story!',
+    listen:'Listen', tryVoice:'Your turn', listening:'Listening...',
+    micHintWord:'Try saying the name out loud!', micHintSentence:'Try saying the sentence out loud!',
+    modeChoice:'Choice', modeVoice:'Voice',
+    finished:(c)=>`You finished ${c}!`, replay:'Play Again', home:'Home',
+    settingsTitle:'Settings',
+    childNameLabel:"Child's name", uploadChildPhoto:"Upload child's photo",
+    mammaNameLabel:"Mom's name", uploadMammaPhoto:"Upload mom's photo",
+    papaNameLabel:"Dad's name", uploadPapaPhoto:"Upload dad's photo", playsInChallenge:'Plays in the challenge',
+    startModeLabel:'Starting quiz mode',
+    modeHint:'You can change mode anytime during play, question by question.',
+    micAvailable:'🎤 Microphone available in this browser.',
+    micUnavailable:'⚠️ Microphone not available in this browser: multiple-choice mode will stay active.',
+    micUnavailableToast:'The microphone is not available on this browser.',
+    resetStars:'🗑️ Reset stars',
+    categories:{animali:'Animals', halloween:'Halloween', ghiaccio:'Ice and Snow', cielo:'Sun and Moon', unicorni:'Unicorns', colori:'Colors', numeri:'Numbers', lettere:'Letters', fiori:'Flowers', principesse:'Princesses', dinosauri:'Dinosaurs', frasi:'Sentences'}
+  },
+  sv: {
+    eyebrow:'Vi lär oss tillsammans',
+    greeting:(n)=>`Hej ${n}! 🌈`,
+    subtitle:'Välj ett spel med fjärrkontrollens pilar',
+    challengeLabel:'Utmaning', back:'Tillbaka',
+    questionWord:'Vad är detta?', questionSentence:'Berätta meningen!',
+    listen:'Lyssna', tryVoice:'Din tur', listening:'Jag lyssnar...',
+    micHintWord:'Försök säga namnet högt!', micHintSentence:'Försök säga meningen högt!',
+    modeChoice:'Val', modeVoice:'Röst',
+    finished:(c)=>`Du klarade ${c}!`, replay:'Spela igen', home:'Hem',
+    settingsTitle:'Inställningar',
+    childNameLabel:'Barnets namn', uploadChildPhoto:'Ladda upp barnets foto',
+    mammaNameLabel:'Mammas namn', uploadMammaPhoto:'Ladda upp mammas foto',
+    papaNameLabel:'Pappas namn', uploadPapaPhoto:'Ladda upp pappas foto', playsInChallenge:'Deltar i utmaningen',
+    startModeLabel:'Startläge för quiz',
+    modeHint:'Ni kan alltid byta läge under spelets gång, fråga för fråga.',
+    micAvailable:'🎤 Mikrofon tillgänglig i den här webbläsaren.',
+    micUnavailable:'⚠️ Mikrofonen är inte tillgänglig i den här webbläsaren: flervalsläge förblir aktivt.',
+    micUnavailableToast:'Mikrofonen är inte tillgänglig i den här webbläsaren.',
+    resetStars:'🗑️ Nollställ stjärnor',
+    categories:{animali:'Djur', halloween:'Halloween', ghiaccio:'Is och Snö', cielo:'Sol och Måne', unicorni:'Enhörningar', colori:'Färger', numeri:'Siffror', lettere:'Bokstäver', fiori:'Blommor', principesse:'Prinsessor', dinosauri:'Dinosaurier', frasi:'Meningar'}
+  },
+  fr: {
+    eyebrow:'Apprenons ensemble',
+    greeting:(n)=>`Salut ${n}! 🌈`,
+    subtitle:'Choisis un jeu avec les flèches de la télécommande',
+    challengeLabel:'Défi', back:'Retour',
+    questionWord:"Qu'est-ce que c'est?", questionSentence:'Raconte la phrase!',
+    listen:'Écoute', tryVoice:'À toi', listening:"J'écoute...",
+    micHintWord:'Essaie de dire le nom à voix haute!', micHintSentence:'Essaie de dire la phrase à voix haute!',
+    modeChoice:'Choix', modeVoice:'Voix',
+    finished:(c)=>`Tu as fini ${c}!`, replay:'Rejouer', home:'Accueil',
+    settingsTitle:'Réglages',
+    childNameLabel:"Prénom de l'enfant", uploadChildPhoto:"Ajouter la photo de l'enfant",
+    mammaNameLabel:'Prénom de maman', uploadMammaPhoto:'Ajouter la photo de maman',
+    papaNameLabel:'Prénom de papa', uploadPapaPhoto:'Ajouter la photo de papa', playsInChallenge:'Participe au défi',
+    startModeLabel:'Mode de départ des quiz',
+    modeHint:'Vous pouvez changer de mode à tout moment pendant le jeu, question par question.',
+    micAvailable:'🎤 Microphone disponible dans ce navigateur.',
+    micUnavailable:"⚠️ Le microphone n'est pas disponible dans ce navigateur : le mode choix multiple restera actif.",
+    micUnavailableToast:"Le microphone n'est pas disponible sur ce navigateur.",
+    resetStars:'🗑️ Réinitialiser les étoiles',
+    categories:{animali:'Animaux', halloween:'Halloween', ghiaccio:'Glace et Neige', cielo:'Soleil et Lune', unicorni:'Licornes', colori:'Couleurs', numeri:'Nombres', lettere:'Lettres', fiori:'Fleurs', principesse:'Princesses', dinosauri:'Dinosaures', frasi:'Phrases'}
+  },
+  ar: {
+    eyebrow:'نتعلم معاً',
+    greeting:(n)=>`مرحباً ${n}! 🌈`,
+    subtitle:'اختاري لعبة بأسهم جهاز التحكم',
+    challengeLabel:'التحدي', back:'رجوع',
+    questionWord:'ما هذا؟', questionSentence:'احكِ الجملة!',
+    listen:'استمعي', tryVoice:'جربي أنتِ', listening:'أستمع إليك...',
+    micHintWord:'حاولي أن تقولي الاسم بصوت عالٍ!', micHintSentence:'حاولي أن تقولي الجملة بصوت عالٍ!',
+    modeChoice:'اختيار', modeVoice:'صوت',
+    finished:(c)=>`أنهيتِ ${c}!`, replay:'العبي مرة أخرى', home:'الرئيسية',
+    settingsTitle:'الإعدادات',
+    childNameLabel:'اسم الطفلة', uploadChildPhoto:'تحميل صورة الطفلة',
+    mammaNameLabel:'اسم الأم', uploadMammaPhoto:'تحميل صورة الأم',
+    papaNameLabel:'اسم الأب', uploadPapaPhoto:'تحميل صورة الأب', playsInChallenge:'يشارك في التحدي',
+    startModeLabel:'وضع بدء الألعاب',
+    modeHint:'يمكنكما تغيير الوضع في أي وقت أثناء اللعب، سؤالاً بعد سؤال.',
+    micAvailable:'🎤 الميكروفون متاح في هذا المتصفح.',
+    micUnavailable:'⚠️ الميكروفون غير متاح في هذا المتصفح: سيبقى وضع الاختيار من متعدد مفعّلاً.',
+    micUnavailableToast:'الميكروفون غير متاح في هذا المتصفح.',
+    resetStars:'🗑️ مسح النجوم',
+    categories:{animali:'حيوانات', halloween:'هالوين', ghiaccio:'جليد وثلج', cielo:'الشمس والقمر', unicorni:'وحيد القرن', colori:'ألوان', numeri:'أرقام', lettere:'حروف', fiori:'زهور', principesse:'أميرات', dinosauri:'ديناصورات', frasi:'جمل'}
+  }
+};
+function L(){ return (state.settings && state.settings.lang) || 'it'; }
+function t(key){
+  const dict = UI[L()] || UI.it;
+  const v = dict[key];
+  if(v !== undefined) return v;
+  return UI.it[key];
+}
+function catLabel(cat){
+  const dict = UI[L()] || UI.it;
+  return (dict.categories && dict.categories[cat.id]) || UI.it.categories[cat.id];
+}
+
+/* ================= VOCABULARY (translated by id) ================= */
+const ITEM_I18N = {
+  leone:{ it:{w:'leone',art:'un'}, en:{w:'lion',art:'a'}, sv:{w:'lejon',art:'ett'}, fr:{w:'lion',art:'un'}, ar:{w:'أسد'} },
+  elefante:{ it:{w:'elefante',art:'un'}, en:{w:'elephant',art:'an'}, sv:{w:'elefant',art:'en'}, fr:{w:'éléphant',art:'un'}, ar:{w:'فيل'} },
+  coniglio:{ it:{w:'coniglio',art:'un'}, en:{w:'rabbit',art:'a'}, sv:{w:'kanin',art:'en'}, fr:{w:'lapin',art:'un'}, ar:{w:'أرنب'} },
+  gatto:{ it:{w:'gatto',art:'un'}, en:{w:'cat',art:'a'}, sv:{w:'katt',art:'en'}, fr:{w:'chat',art:'un'}, ar:{w:'قطة'} },
+  cane:{ it:{w:'cane',art:'un'}, en:{w:'dog',art:'a'}, sv:{w:'hund',art:'en'}, fr:{w:'chien',art:'un'}, ar:{w:'كلب'} },
+  orso:{ it:{w:'orso',art:'un'}, en:{w:'bear',art:'a'}, sv:{w:'björn',art:'en'}, fr:{w:'ours',art:'un'}, ar:{w:'دب'} },
+  tigre:{ it:{w:'tigre',art:'una'}, en:{w:'tiger',art:'a'}, sv:{w:'tiger',art:'en'}, fr:{w:'tigre',art:'un'}, ar:{w:'نمر'} },
+  mucca:{ it:{w:'mucca',art:'una'}, en:{w:'cow',art:'a'}, sv:{w:'ko',art:'en'}, fr:{w:'vache',art:'une'}, ar:{w:'بقرة'} },
+  rana:{ it:{w:'rana',art:'una'}, en:{w:'frog',art:'a'}, sv:{w:'groda',art:'en'}, fr:{w:'grenouille',art:'une'}, ar:{w:'ضفدع'} },
+  farfalla:{ it:{w:'farfalla',art:'una'}, en:{w:'butterfly',art:'a'}, sv:{w:'fjäril',art:'en'}, fr:{w:'papillon',art:'un'}, ar:{w:'فراشة'} },
+
+  zucca:{ it:{w:'zucca',art:'una'}, en:{w:'pumpkin',art:'a'}, sv:{w:'pumpa',art:'en'}, fr:{w:'citrouille',art:'une'}, ar:{w:'يقطين'} },
+  fantasma:{ it:{w:'fantasma',art:'un'}, en:{w:'ghost',art:'a'}, sv:{w:'spöke',art:'ett'}, fr:{w:'fantôme',art:'un'}, ar:{w:'شبح'} },
+  strega:{ it:{w:'strega',art:'una'}, en:{w:'witch',art:'a'}, sv:{w:'häxa',art:'en'}, fr:{w:'sorcière',art:'une'}, ar:{w:'ساحرة'} },
+  pipistrello:{ it:{w:'pipistrello',art:'un'}, en:{w:'bat',art:'a'}, sv:{w:'fladdermus',art:'en'}, fr:{w:'chauve-souris',art:'une'}, ar:{w:'خفاش'} },
+  ragno:{ it:{w:'ragno',art:'un'}, en:{w:'spider',art:'a'}, sv:{w:'spindel',art:'en'}, fr:{w:'araignée',art:'une'}, ar:{w:'عنكبوت'} },
+  caramella:{ it:{w:'caramella',art:'una'}, en:{w:'candy',art:'a'}, sv:{w:'godis',art:'ett'}, fr:{w:'bonbon',art:'un'}, ar:{w:'حلوى'} },
+  mostro:{ it:{w:'mostro',art:'un'}, en:{w:'monster',art:'a'}, sv:{w:'monster',art:'ett'}, fr:{w:'monstre',art:'un'}, ar:{w:'وحش'} },
+  scheletro:{ it:{w:'scheletro',art:'uno'}, en:{w:'skeleton',art:'a'}, sv:{w:'skelett',art:'ett'}, fr:{w:'squelette',art:'un'}, ar:{w:'هيكل عظمي'} },
+
+  neve:{ it:{w:'neve',art:'la'}, en:{w:'snow',art:'the'}, sv:{w:'snön'}, fr:{w:'neige',art:'la'}, ar:{w:'الثلج'} },
+  pupazzo_neve:{ it:{w:'pupazzo di neve',art:'un', accepts:['pupazzo di neve','pupazzo','neve']}, en:{w:'snowman',art:'a'}, sv:{w:'snögubbe',art:'en'}, fr:{w:'bonhomme de neige',art:'un'}, ar:{w:'رجل الثلج'} },
+  ghiacciolo:{ it:{w:'ghiacciolo',art:'un'}, en:{w:'ice cube',art:'an'}, sv:{w:'isbit',art:'en'}, fr:{w:'glaçon',art:'un'}, ar:{w:'مكعب ثلج'} },
+  slitta:{ it:{w:'slitta',art:'una'}, en:{w:'sled',art:'a'}, sv:{w:'kälke',art:'en'}, fr:{w:'luge',art:'une'}, ar:{w:'زلاجة'} },
+  renna:{ it:{w:'renna',art:'una'}, en:{w:'reindeer',art:'a'}, sv:{w:'ren',art:'en'}, fr:{w:'renne',art:'un'}, ar:{w:'رنة'} },
+  guanto:{ it:{w:'guanto',art:'un', accepts:['guanto','guanti']}, en:{w:'glove',art:'a'}, sv:{w:'vante',art:'en'}, fr:{w:'gant',art:'un'}, ar:{w:'قفاز'} },
+  sciarpa:{ it:{w:'sciarpa',art:'una'}, en:{w:'scarf',art:'a'}, sv:{w:'halsduk',art:'en'}, fr:{w:'écharpe',art:'une'}, ar:{w:'وشاح'} },
+  castello:{ it:{w:'castello',art:'un'}, en:{w:'castle',art:'a'}, sv:{w:'slott',art:'ett'}, fr:{w:'château',art:'un'}, ar:{w:'قصر'} },
+
+  sole:{ it:{w:'sole',art:'il'}, en:{w:'sun',art:'the'}, sv:{w:'solen'}, fr:{w:'soleil',art:'le'}, ar:{w:'الشمس'} },
+  luna:{ it:{w:'luna',art:'la'}, en:{w:'moon',art:'the'}, sv:{w:'månen'}, fr:{w:'lune',art:'la'}, ar:{w:'القمر'} },
+  stella:{ it:{w:'stella',art:'una'}, en:{w:'star',art:'a'}, sv:{w:'stjärna',art:'en'}, fr:{w:'étoile',art:'une'}, ar:{w:'نجمة'} },
+  nuvola:{ it:{w:'nuvola',art:'una'}, en:{w:'cloud',art:'a'}, sv:{w:'moln',art:'ett'}, fr:{w:'nuage',art:'un'}, ar:{w:'غيمة'} },
+  arcobaleno:{ it:{w:'arcobaleno',art:'un'}, en:{w:'rainbow',art:'a'}, sv:{w:'regnbåge',art:'en'}, fr:{w:'arc-en-ciel',art:'un'}, ar:{w:'قوس قزح'} },
+  pioggia:{ it:{w:'pioggia',art:'la'}, en:{w:'rain',art:'the'}, sv:{w:'regnet'}, fr:{w:'pluie',art:'la'}, ar:{w:'المطر'} },
+  fulmine:{ it:{w:'fulmine',art:'un'}, en:{w:'lightning bolt',art:'a'}, sv:{w:'blixt',art:'en'}, fr:{w:'éclair',art:'un'}, ar:{w:'برق'} },
+
+  unicorno:{ it:{w:'unicorno',art:'un'}, en:{w:'unicorn',art:'a'}, sv:{w:'enhörning',art:'en'}, fr:{w:'licorne',art:'une'}, ar:{w:'وحيد قرن'} },
+  cuore:{ it:{w:'cuore',art:'un'}, en:{w:'heart',art:'a'}, sv:{w:'hjärta',art:'ett'}, fr:{w:'cœur',art:'un'}, ar:{w:'قلب'} },
+  fiore:{ it:{w:'fiore',art:'un'}, en:{w:'flower',art:'a'}, sv:{w:'blomma',art:'en'}, fr:{w:'fleur',art:'une'}, ar:{w:'زهرة'} },
+
+  rosso:{ it:{w:'rosso'}, en:{w:'red'}, sv:{w:'röd'}, fr:{w:'rouge'}, ar:{w:'أحمر'} },
+  blu:{ it:{w:'blu'}, en:{w:'blue'}, sv:{w:'blå'}, fr:{w:'bleu'}, ar:{w:'أزرق'} },
+  giallo:{ it:{w:'giallo'}, en:{w:'yellow'}, sv:{w:'gul'}, fr:{w:'jaune'}, ar:{w:'أصفر'} },
+  verde:{ it:{w:'verde'}, en:{w:'green'}, sv:{w:'grön'}, fr:{w:'vert'}, ar:{w:'أخضر'} },
+  viola:{ it:{w:'viola'}, en:{w:'purple'}, sv:{w:'lila'}, fr:{w:'violet'}, ar:{w:'بنفسجي'} },
+  arancione:{ it:{w:'arancione'}, en:{w:'orange'}, sv:{w:'orange'}, fr:{w:'orange'}, ar:{w:'برتقالي'} },
+  nero:{ it:{w:'nero'}, en:{w:'black'}, sv:{w:'svart'}, fr:{w:'noir'}, ar:{w:'أسود'} },
+  bianco:{ it:{w:'bianco'}, en:{w:'white'}, sv:{w:'vit'}, fr:{w:'blanc'}, ar:{w:'أبيض'} },
+
+  n1:{ it:{w:'uno'}, en:{w:'one'}, sv:{w:'ett'}, fr:{w:'un'}, ar:{w:'واحد'} },
+  n2:{ it:{w:'due'}, en:{w:'two'}, sv:{w:'två'}, fr:{w:'deux'}, ar:{w:'اثنان'} },
+  n3:{ it:{w:'tre'}, en:{w:'three'}, sv:{w:'tre'}, fr:{w:'trois'}, ar:{w:'ثلاثة'} },
+  n4:{ it:{w:'quattro'}, en:{w:'four'}, sv:{w:'fyra'}, fr:{w:'quatre'}, ar:{w:'أربعة'} },
+  n5:{ it:{w:'cinque'}, en:{w:'five'}, sv:{w:'fem'}, fr:{w:'cinq'}, ar:{w:'خمسة'} },
+  n6:{ it:{w:'sei'}, en:{w:'six'}, sv:{w:'sex'}, fr:{w:'six'}, ar:{w:'ستة'} },
+  n7:{ it:{w:'sette'}, en:{w:'seven'}, sv:{w:'sju'}, fr:{w:'sept'}, ar:{w:'سبعة'} },
+  n8:{ it:{w:'otto'}, en:{w:'eight'}, sv:{w:'åtta'}, fr:{w:'huit'}, ar:{w:'ثمانية'} },
+  n9:{ it:{w:'nove'}, en:{w:'nine'}, sv:{w:'nio'}, fr:{w:'neuf'}, ar:{w:'تسعة'} },
+  n10:{ it:{w:'dieci'}, en:{w:'ten'}, sv:{w:'tio'}, fr:{w:'dix'}, ar:{w:'عشرة'} },
+
+  rosa_fiore:{ it:{w:'rosa',art:'una'}, en:{w:'rose',art:'a'}, sv:{w:'ros',art:'en'}, fr:{w:'rose',art:'une'}, ar:{w:'وردة'} },
+  girasole:{ it:{w:'girasole',art:'un'}, en:{w:'sunflower',art:'a'}, sv:{w:'solros',art:'en'}, fr:{w:'tournesol',art:'un'}, ar:{w:'عباد الشمس'} },
+  tulipano:{ it:{w:'tulipano',art:'un'}, en:{w:'tulip',art:'a'}, sv:{w:'tulpan',art:'en'}, fr:{w:'tulipe',art:'une'}, ar:{w:'توليب'} },
+  margherita:{ it:{w:'margherita',art:'una'}, en:{w:'daisy',art:'a'}, sv:{w:'tusensköna',art:'en'}, fr:{w:'marguerite',art:'une'}, ar:{w:'أقحوان'} },
+  fiore_ciliegio:{ it:{w:'fiore di ciliegio',art:'un', accepts:['fiore di ciliegio','fiore','ciliegio']}, en:{w:'cherry blossom',art:'a'}, sv:{w:'körsbärsblomma',art:'en'}, fr:{w:'fleur de cerisier',art:'une'}, ar:{w:'زهر الكرز'} },
+  trifoglio:{ it:{w:'trifoglio',art:'un'}, en:{w:'clover',art:'a'}, sv:{w:'klöver',art:'en'}, fr:{w:'trèfle',art:'un'}, ar:{w:'برسيم'} },
+
+  principessa:{ it:{w:'principessa',art:'una'}, en:{w:'princess',art:'a'}, sv:{w:'prinsessa',art:'en'}, fr:{w:'princesse',art:'une'}, ar:{w:'أميرة'} },
+  principe:{ it:{w:'principe',art:'un'}, en:{w:'prince',art:'a'}, sv:{w:'prins',art:'en'}, fr:{w:'prince',art:'un'}, ar:{w:'أمير'} },
+  corona:{ it:{w:'corona',art:'una'}, en:{w:'crown',art:'a'}, sv:{w:'krona',art:'en'}, fr:{w:'couronne',art:'une'}, ar:{w:'تاج'} },
+  bacchetta_magica:{ it:{w:'bacchetta magica',art:'una', accepts:['bacchetta magica','bacchetta']}, en:{w:'magic wand',art:'a'}, sv:{w:'trollspö',art:'ett'}, fr:{w:'baguette magique',art:'une'}, ar:{w:'عصا سحرية'} },
+  cavallo:{ it:{w:'cavallo',art:'un'}, en:{w:'horse',art:'a'}, sv:{w:'häst',art:'en'}, fr:{w:'cheval',art:'un'}, ar:{w:'حصان'} },
+
+  dinosauro:{ it:{w:'dinosauro',art:'un'}, en:{w:'dinosaur',art:'a'}, sv:{w:'dinosaurie',art:'en'}, fr:{w:'dinosaure',art:'un'}, ar:{w:'ديناصور'} },
+  tirannosauro:{ it:{w:'tirannosauro',art:'un', accepts:['tirannosauro','t-rex','trex']}, en:{w:'T-Rex',art:'a'}, sv:{w:'T-Rex',art:'en'}, fr:{w:'T-Rex',art:'un'}, ar:{w:'تي ريكس'} },
+  uovo:{ it:{w:'uovo',art:'un'}, en:{w:'egg',art:'an'}, sv:{w:'ägg',art:'ett'}, fr:{w:'œuf',art:'un'}, ar:{w:'بيضة'} },
+  osso:{ it:{w:'osso',art:'un'}, en:{w:'bone',art:'a'}, sv:{w:'ben',art:'ett'}, fr:{w:'os',art:'un'}, ar:{w:'عظمة'} },
+  vulcano:{ it:{w:'vulcano',art:'un'}, en:{w:'volcano',art:'a'}, sv:{w:'vulkan',art:'en'}, fr:{w:'volcan',art:'un'}, ar:{w:'بركان'} },
+  albero:{ it:{w:'albero',art:'un'}, en:{w:'tree',art:'a'}, sv:{w:'träd',art:'ett'}, fr:{w:'arbre',art:'un'}, ar:{w:'شجرة'} }
+};
+
+/* ================= SENTENCES (rebus) ================= */
+const SENTENCE_I18N = {
+  cane_marrone:{ it:{w:'il cane è marrone',keywords:['can','marron']}, en:{w:'The dog is brown.',keywords:['dog','brown']}, sv:{w:'Hunden är brun.',keywords:['hund','brun']}, fr:{w:'Le chien est marron.',keywords:['chien','marron']}, ar:{w:'الكلب بني.',keywords:['كلب','بني']} },
+  unicorno_bianco:{ it:{w:"l'unicorno è bianco",keywords:['unicorn','bianc']}, en:{w:'The unicorn is white.',keywords:['unicorn','white']}, sv:{w:'Enhörningen är vit.',keywords:['enhörning','vit']}, fr:{w:'La licorne est blanche.',keywords:['licorne','blanch']}, ar:{w:'وحيد القرن أبيض.',keywords:['قرن','أبيض']} },
+  rana_verde:{ it:{w:'la rana è verde',keywords:['ran','verd']}, en:{w:'The frog is green.',keywords:['frog','green']}, sv:{w:'Grodan är grön.',keywords:['grod','grön']}, fr:{w:'La grenouille est verte.',keywords:['grenouill','vert']}, ar:{w:'الضفدع أخضر.',keywords:['ضفدع','أخضر']} },
+  stella_gialla:{ it:{w:'la stella è gialla',keywords:['stell','giall']}, en:{w:'The star is yellow.',keywords:['star','yellow']}, sv:{w:'Stjärnan är gul.',keywords:['stjärn','gul']}, fr:{w:"L'étoile est jaune.",keywords:['étoile','jaune']}, ar:{w:'النجمة صفراء.',keywords:['نجمة','صفراء']} },
+  orso_marrone:{ it:{w:"l'orso è marrone",keywords:['ors','marron']}, en:{w:'The bear is brown.',keywords:['bear','brown']}, sv:{w:'Björnen är brun.',keywords:['björn','brun']}, fr:{w:"L'ours est marron.",keywords:['ours','marron']}, ar:{w:'الدب بني.',keywords:['دب','بني']} },
+  gatto_nero:{ it:{w:'il gatto è nero',keywords:['gatt','ner']}, en:{w:'The cat is black.',keywords:['cat','black']}, sv:{w:'Katten är svart.',keywords:['katt','svart']}, fr:{w:'Le chat est noir.',keywords:['chat','noir']}, ar:{w:'القطة سوداء.',keywords:['قطة','سوداء']} },
+  bambina_felice:{ it:{w:'la bambina è felice',keywords:['bambin','felic']}, en:{w:'The girl is happy.',keywords:['girl','happy']}, sv:{w:'Flickan är glad.',keywords:['flick','glad']}, fr:{w:'La fille est heureuse.',keywords:['fille','heureus']}, ar:{w:'الفتاة سعيدة.',keywords:['فتاة','سعيدة']} },
+  bambino_stanco:{ it:{w:'il bambino è stanco',keywords:['bambin','stanc']}, en:{w:'The boy is tired.',keywords:['boy','tired']}, sv:{w:'Pojken är trött.',keywords:['pojk','trött']}, fr:{w:'Le garçon est fatigué.',keywords:['garçon','fatigu']}, ar:{w:'الولد متعب.',keywords:['ولد','متعب']} },
+  conigli_carote:{ it:{w:'i conigli mangiano le carote',keywords:['conigli','mangia','carot']}, en:{w:'The rabbits eat the carrots.',keywords:['rabbit','eat','carrot']}, sv:{w:'Kaninerna äter morötterna.',keywords:['kanin','äter','morot']}, fr:{w:'Les lapins mangent les carottes.',keywords:['lapin','mangent','carott']}, ar:{w:'الأرانب تأكل الجزر.',keywords:['أرانب','تأكل','جزر']} },
+  gatto_latte:{ it:{w:'il gatto beve il latte',keywords:['gatt','beve','latt']}, en:{w:'The cat drinks milk.',keywords:['cat','drink','milk']}, sv:{w:'Katten dricker mjölk.',keywords:['katt','dricker','mjölk']}, fr:{w:'Le chat boit du lait.',keywords:['chat','boit','lait']}, ar:{w:'القطة تشرب الحليب.',keywords:['قطة','تشرب','حليب']} },
+  orso_miele:{ it:{w:"l'orso mangia il miele",keywords:['ors','mangia','miel']}, en:{w:'The bear eats honey.',keywords:['bear','eat','honey']}, sv:{w:'Björnen äter honung.',keywords:['björn','äter','honung']}, fr:{w:"L'ours mange du miel.",keywords:['ours','mange','miel']}, ar:{w:'الدب يأكل العسل.',keywords:['دب','يأكل','عسل']} },
+  bambina_pizza:{ it:{w:'la bambina mangia la pizza',keywords:['bambin','mangia','pizz']}, en:{w:'The girl eats pizza.',keywords:['girl','eat','pizza']}, sv:{w:'Flickan äter pizza.',keywords:['flick','äter','pizza']}, fr:{w:'La fille mange de la pizza.',keywords:['fille','mange','pizza']}, ar:{w:'الفتاة تأكل البيتزا.',keywords:['فتاة','تأكل','بيتزا']} },
+  bambino_succo:{ it:{w:'il bambino beve il succo',keywords:['bambin','beve','succ']}, en:{w:'The boy drinks juice.',keywords:['boy','drink','juice']}, sv:{w:'Pojken dricker juice.',keywords:['pojk','dricker','juice']}, fr:{w:'Le garçon boit du jus.',keywords:['garçon','boit','jus']}, ar:{w:'الولد يشرب العصير.',keywords:['ولد','يشرب','عصير']} },
+  uccellino_verme:{ it:{w:"l'uccellino mangia il verme",keywords:['uccellin','mangia','verm']}, en:{w:'The little bird eats the worm.',keywords:['bird','eat','worm']}, sv:{w:'Fågeln äter masken.',keywords:['fågel','äter','mask']}, fr:{w:'L’oiseau mange le ver.',keywords:['oiseau','mange','ver']}, ar:{w:'العصفور يأكل الدودة.',keywords:['عصفور','يأكل','دودة']} },
+  mamma_pasta:{ it:{w:'la mamma mangia la pasta',keywords:['mamm','mangia','past']}, en:{w:'Mom eats pasta.',keywords:['mom','eat','pasta']}, sv:{w:'Mamma äter pasta.',keywords:['mamma','äter','pasta']}, fr:{w:'Maman mange des pâtes.',keywords:['maman','mange','pât']}, ar:{w:'ماما تأكل المعكرونة.',keywords:['ماما','تأكل','معكرونة']} },
+  papa_caffe:{ it:{w:'il papà beve il caffè',keywords:['pap','beve','caff']}, en:{w:'Dad drinks coffee.',keywords:['dad','drink','coffee']}, sv:{w:'Pappa dricker kaffe.',keywords:['pappa','dricker','kaffe']}, fr:{w:'Papa boit du café.',keywords:['papa','boit','café']}, ar:{w:'بابا يشرب القهوة.',keywords:['بابا','يشرب','قهوة']} },
+  cane_corre:{ it:{w:'il cane corre',keywords:['can','corr']}, en:{w:'The dog runs.',keywords:['dog','run']}, sv:{w:'Hunden springer.',keywords:['hund','springer']}, fr:{w:'Le chien court.',keywords:['chien','court']}, ar:{w:'الكلب يجري.',keywords:['كلب','يجري']} },
+  pesce_nuota:{ it:{w:'il pesce nuota',keywords:['pesc','nuot']}, en:{w:'The fish swims.',keywords:['fish','swim']}, sv:{w:'Fisken simmar.',keywords:['fisk','simmar']}, fr:{w:'Le poisson nage.',keywords:['poisson','nage']}, ar:{w:'السمكة تسبح.',keywords:['سمكة','تسبح']} },
+  bambina_dorme:{ it:{w:'la bambina dorme',keywords:['bambin','dorm']}, en:{w:'The girl sleeps.',keywords:['girl','sleep']}, sv:{w:'Flickan sover.',keywords:['flick','sover']}, fr:{w:'La fille dort.',keywords:['fille','dort']}, ar:{w:'الفتاة تنام.',keywords:['فتاة','تنام']} },
+  papa_legge:{ it:{w:'il papà legge',keywords:['pap','legg']}, en:{w:'Dad reads.',keywords:['dad','read']}, sv:{w:'Pappa läser.',keywords:['pappa','läser']}, fr:{w:'Papa lit.',keywords:['papa','lit']}, ar:{w:'بابا يقرأ.',keywords:['بابا','يقرأ']} },
+  mamma_canta:{ it:{w:'la mamma canta',keywords:['mamm','cant']}, en:{w:'Mom sings.',keywords:['mom','sing']}, sv:{w:'Mamma sjunger.',keywords:['mamma','sjunger']}, fr:{w:'Maman chante.',keywords:['maman','chante']}, ar:{w:'ماما تغني.',keywords:['ماما','تغني']} },
+  bambina_gioca:{ it:{w:'la bambina gioca',keywords:['bambin','gioc']}, en:{w:'The girl plays.',keywords:['girl','play']}, sv:{w:'Flickan leker.',keywords:['flick','leker']}, fr:{w:'La fille joue.',keywords:['fille','joue']}, ar:{w:'الفتاة تلعب.',keywords:['فتاة','تلعب']} },
+  coniglio_salta:{ it:{w:'il coniglio salta',keywords:['coniglio','salt']}, en:{w:'The rabbit jumps.',keywords:['rabbit','jump']}, sv:{w:'Kaninen hoppar.',keywords:['kanin','hoppar']}, fr:{w:'Le lapin saute.',keywords:['lapin','saute']}, ar:{w:'الأرنب يقفز.',keywords:['أرنب','يقفز']} }
+};
+
+const SENTENCES = [
+  {id:'cane_marrone', e:'🐶 🟤'}, {id:'unicorno_bianco', e:'🦄 ⚪'}, {id:'rana_verde', e:'🐸 🟢'},
+  {id:'stella_gialla', e:'⭐ 🟡'}, {id:'orso_marrone', e:'🐻 🟤'}, {id:'gatto_nero', e:'🐱 ⚫'},
+  {id:'bambina_felice', e:'👧 😊'}, {id:'bambino_stanco', e:'👦 😴'}, {id:'conigli_carote', e:'🐰 🍽️ 🥕'},
+  {id:'gatto_latte', e:'🐱 🥤 🥛'}, {id:'orso_miele', e:'🐻 🍽️ 🍯'}, {id:'bambina_pizza', e:'👧 🍽️ 🍕'},
+  {id:'bambino_succo', e:'👦 🥤 🧃'}, {id:'uccellino_verme', e:'🐦 🍽️ 🐛'}, {id:'mamma_pasta', e:'👩 🍽️ 🍝'},
+  {id:'papa_caffe', e:'👨 🥤 ☕'}, {id:'cane_corre', e:'🐶 🏃'}, {id:'pesce_nuota', e:'🐟 🏊'},
+  {id:'bambina_dorme', e:'👧 🛌'}, {id:'papa_legge', e:'👨 📖'}, {id:'mamma_canta', e:'👩 🎵'},
+  {id:'bambina_gioca', e:'👧 ⚽'}, {id:'coniglio_salta', e:'🐰 🤸'}
+];
+
+/* ================= CATEGORIES ================= */
+const CATEGORIES = [
+  {id:'animali', emoji:'🦁', items:[
+    {id:'leone', e:'🦁'},{id:'elefante', e:'🐘'},{id:'coniglio', e:'🐰'},{id:'gatto', e:'🐱'},
+    {id:'cane', e:'🐶'},{id:'orso', e:'🐻'},{id:'tigre', e:'🐯'},{id:'mucca', e:'🐮'},
+    {id:'rana', e:'🐸'},{id:'farfalla', e:'🦋'}
+  ]},
+  {id:'halloween', emoji:'🎃', items:[
+    {id:'zucca', e:'🎃'},{id:'fantasma', e:'👻'},{id:'strega', e:'🧙'},{id:'pipistrello', e:'🦇'},
+    {id:'ragno', e:'🕷️'},{id:'caramella', e:'🍬'},{id:'mostro', e:'👹'},{id:'scheletro', e:'💀'}
+  ]},
+  {id:'ghiaccio', emoji:'❄️', items:[
+    {id:'neve', e:'❄️'},{id:'pupazzo_neve', e:'⛄'},
+    {id:'ghiacciolo', e:'🧊'},{id:'slitta', e:'🛷'},{id:'renna', e:'🦌'},
+    {id:'guanto', e:'🧤'},{id:'sciarpa', e:'🧣'},{id:'castello', e:'🏰'}
+  ]},
+  {id:'cielo', emoji:'☀️', items:[
+    {id:'sole', e:'☀️'},{id:'luna', e:'🌙'},{id:'stella', e:'⭐'},{id:'nuvola', e:'☁️'},
+    {id:'arcobaleno', e:'🌈'},{id:'pioggia', e:'🌧️'},{id:'fulmine', e:'⚡'}
+  ]},
+  {id:'unicorni', emoji:'🦄', items:[
+    {id:'unicorno', e:'🦄'},{id:'arcobaleno', e:'🌈'},{id:'stella', e:'✨'},{id:'cuore', e:'💖'},
+    {id:'castello', e:'🏰'},{id:'fiore', e:'🌸'},{id:'nuvola', e:'☁️'}
+  ]},
+  {id:'colori', emoji:'🎨', items:[
+    {id:'rosso', e:'❤️'},{id:'blu', e:'💙'},{id:'giallo', e:'💛'},{id:'verde', e:'💚'},
+    {id:'viola', e:'💜'},{id:'arancione', e:'🧡'},{id:'nero', e:'🖤'},{id:'bianco', e:'🤍'}
+  ]},
+  {id:'numeri', emoji:'🔢', items:[
+    {id:'n1', e:'1️⃣'},{id:'n2', e:'2️⃣'},{id:'n3', e:'3️⃣'},{id:'n4', e:'4️⃣'},
+    {id:'n5', e:'5️⃣'},{id:'n6', e:'6️⃣'},{id:'n7', e:'7️⃣'},{id:'n8', e:'8️⃣'},
+    {id:'n9', e:'9️⃣'},{id:'n10', e:'🔟'}
+  ]},
+  {id:'lettere', emoji:'🔤', items:[
+    {w:'a di ape', e:'🐝', accepts:['a','ape','a di ape']},
+    {w:'b di balena', e:'🐳', accepts:['b','balena','b di balena']},
+    {w:'c di cane', e:'🐶', accepts:['c','cane','c di cane']},
+    {w:'d di delfino', e:'🐬', accepts:['d','delfino','d di delfino']},
+    {w:'e di elefante', e:'🐘', accepts:['e','elefante','e di elefante']},
+    {w:'f di fiore', e:'🌸', accepts:['f','fiore','f di fiore']},
+    {w:'g di gatto', e:'🐱', accepts:['g','gatto','g di gatto']},
+    {w:'l di leone', e:'🦁', accepts:['l','leone','l di leone']},
+    {w:'o di orso', e:'🐻', accepts:['o','orso','o di orso']},
+    {w:'p di pesce', e:'🐟', accepts:['p','pesce','p di pesce']}
+  ]},
+  {id:'fiori', emoji:'🌸', items:[
+    {id:'rosa_fiore', e:'🌹'},{id:'girasole', e:'🌻'},{id:'tulipano', e:'🌷'},{id:'margherita', e:'🌼'},
+    {id:'fiore_ciliegio', e:'🌸'},{id:'trifoglio', e:'☘️'}
+  ]},
+  {id:'principesse', emoji:'👸', items:[
+    {id:'principessa', e:'👸'},{id:'principe', e:'🤴'},{id:'corona', e:'👑'},{id:'castello', e:'🏰'},
+    {id:'bacchetta_magica', e:'🪄'},{id:'cavallo', e:'🐴'}
+  ]},
+  {id:'dinosauri', emoji:'🦕', items:[
+    {id:'dinosauro', e:'🦕'},{id:'tirannosauro', e:'🦖'},
+    {id:'uovo', e:'🥚'},{id:'osso', e:'🦴'},{id:'vulcano', e:'🌋'},{id:'albero', e:'🌴'}
+  ]},
+  {id:'frasi', emoji:'🧩', items: SENTENCES}
+];
+
+const PRAISE_I18N = {
+  it:['Bravissima!', 'Brava!', 'Ben fatto!', 'Evviva!', 'Che brava!', 'Molto bene!', 'Ottimo lavoro!', 'Perfetto!'],
+  en:['Great job!', 'Well done!', 'Nice work!', 'Hooray!', 'You did it!', 'Very good!', 'Excellent!', 'Perfect!'],
+  sv:['Bra jobbat!', 'Vad duktig du är!', 'Toppen!', 'Hurra!', 'Du klarade det!', 'Mycket bra!', 'Utmärkt!', 'Perfekt!'],
+  fr:['Bravo!', 'Bien joué!', 'Bien fait!', 'Youpi!', 'Tu as réussi!', 'Très bien!', 'Excellent!', 'Parfait!'],
+  ar:['أحسنتِ!', 'ممتاز!', 'عمل رائع!', 'يا سلام!', 'لقد نجحتِ!', 'جيد جداً!', 'رائع!', 'مثالي!']
+};
+const RETRY_I18N = {
+  it:['Riprova, ce la fai!', 'Quasi! Un altro tentativo!', 'Dai che ci sei vicina!'],
+  en:['Try again, you can do it!', 'So close! One more try!', 'Come on, you\'re almost there!'],
+  sv:['Försök igen, du klarar det!', 'Så nära! Ett försök till!', 'Kom igen, du är nästan där!'],
+  fr:['Réessaie, tu peux le faire!', 'Presque! Encore un essai!', 'Allez, tu y es presque!'],
+  ar:['حاولي مرة أخرى، تستطيعين!', 'اقتربتِ! حاولي مرة أخرى!', 'هيا، أنتِ قريبة جداً!']
+};
+function PRAISE(){ return PRAISE_I18N[L()] || PRAISE_I18N.it; }
+function RETRY(){ return RETRY_I18N[L()] || RETRY_I18N.it; }
+
+
+/* ================= STATE ================= */
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem('itago_'+k); return v?JSON.parse(v):d; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem('itago_'+k, JSON.stringify(v)); }catch(e){} }
+};
+
+const state = {
+  screen: 'home',
+  history: [],
+  stars: store.get('stars', {}),
+  settings: store.get('settings', {
+    childName: 'Valeria', childPhoto: null,
+    mammaName: 'Mamma', mammaPhoto: null, mammaEnabled: true,
+    papaName: 'Papà', papaPhoto: null, papaEnabled: false,
+    challengeMode: false, forcedMode: 'choice', lang: 'it'
+  }),
+  currentCategory: null,
+  currentIndex: 0,
+  order: [],
+  scores: {child:0, mamma:0, papa:0},
+  turn: 'child',
+  quizMode: 'choice',
+  voiceFails: 0,
+  showChoiceFallback: false,
+  choiceOptions: [],
+  listening: false,
+  answering: false
+};
+
+if(state.settings.forcedMode === 'auto') state.settings.forcedMode = 'choice';
+if(!state.settings.lang) state.settings.lang = 'it';
+if(state.settings.childName === 'Stella') state.settings.childName = 'Valeria';
+if(state.settings.mammaName === undefined){ state.settings.mammaName = state.settings.parentName || 'Mamma'; }
+if(state.settings.mammaPhoto === undefined){ state.settings.mammaPhoto = state.settings.parentPhoto || null; }
+if(state.settings.mammaEnabled === undefined) state.settings.mammaEnabled = true;
+if(state.settings.papaName === undefined) state.settings.papaName = 'Papà';
+if(state.settings.papaPhoto === undefined) state.settings.papaPhoto = null;
+if(state.settings.papaEnabled === undefined) state.settings.papaEnabled = false;
+
+function saveSettings(){ store.set('settings', state.settings); }
+function saveStars(){ store.set('stars', state.stars); }
+function activeRoster(){
+  const r = ['child'];
+  if(state.settings.mammaEnabled) r.push('mamma');
+  if(state.settings.papaEnabled) r.push('papa');
+  return r;
+}
+
+function applyDocumentLang(){
+  const l = LANGS[L()] || LANGS.it;
+  document.documentElement.lang = L();
+  document.documentElement.dir = l.dir;
+  document.body.classList.toggle('lang-ar', L() === 'ar');
+}
+applyDocumentLang();
+
+/* ================= SPEECH ================= */
+let voiceSupported = false;
+try{
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  voiceSupported = !!SR;
+}catch(e){ voiceSupported = false; }
+
+let allVoices = [];
+function loadVoices(){
+  try{ allVoices = speechSynthesis.getVoices(); }
+  catch(e){}
+}
+if(window.speechSynthesis){
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+function pickVoice(bcp47){
+  const prefix = (bcp47 || (LANGS[L()]||LANGS.it).bcp47).split('-')[0].toLowerCase();
+  const langVoices = allVoices.filter(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
+  if(!langVoices.length) return null;
+  const preferred = langVoices.find(v => /female|donna|woman|elsa|alice|paola|federica|giulia|kvinna|femme/i.test(v.name));
+  return preferred || langVoices[0];
+}
+
+function speak(text, opts){
+  opts = opts || {};
+  try{
+    if(!window.speechSynthesis){ if(opts.onEnd) opts.onEnd(); return; }
+    const u = new SpeechSynthesisUtterance(text);
+    const bcp = opts.langOverride || (LANGS[L()]||LANGS.it).bcp47;
+    u.lang = bcp;
+    const v = pickVoice(bcp);
+    if(v) u.voice = v;
+    u.rate = opts.excited ? 1.12 : (opts.teach ? 0.95 : 1.02);
+    u.pitch = opts.excited ? 1.55 : (opts.teach ? 1.2 : 1.35);
+    u.volume = 1;
+    if(opts.onEnd){
+      let done = false;
+      const finish = () => { if(done) return; done = true; opts.onEnd(); };
+      u.onend = finish;
+      u.onerror = finish;
+      setTimeout(finish, 3000);
+    }
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }catch(e){ if(opts.onEnd) opts.onEnd(); }
+}
+
+function normalize(s){
+  return s.toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9؀-ۿ ]/g, '').trim();
+}
+
+function matches(transcript, item){
+  const accepted = item.accepts || [item.w];
+  const t = normalize(transcript);
+  const directHit = accepted.some(a => {
+    const an = normalize(a);
+    if(an.length <= 2) return t === an;
+    return t === an || t.includes(an) || an.includes(t);
+  });
+  if(directHit) return true;
+  if(item.keywords && item.keywords.length){
+    const hits = item.keywords.filter(k => t.includes(normalize(k))).length;
+    return hits >= Math.max(2, Math.ceil(item.keywords.length * 0.66));
+  }
+  return false;
+}
+
+function effectiveMode(){
+  if(state.quizMode === 'voice') return voiceSupported ? 'voice' : 'choice';
+  return 'choice';
+}
+
+function startListening(item, onDone, langOverride){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ onDone(false, 'unsupported'); return; }
+  let rec;
+  try{ rec = new SR(); }catch(e){ onDone(false, 'unsupported'); return; }
+  rec.lang = langOverride || (LANGS[L()]||LANGS.it).bcp47;
+  rec.maxAlternatives = 3;
+  rec.interimResults = false;
+  state.listening = true;
+  render();
+  let done = false;
+  rec.onresult = (e) => {
+    done = true;
+    state.listening = false;
+    const alts = Array.from(e.results[0]).map(r => r.transcript);
+    const ok = alts.some(a => matches(a, item));
+    onDone(ok, null);
+  };
+  rec.onerror = (e) => {
+    if(done) return;
+    done = true;
+    state.listening = false;
+    onDone(false, e.error);
+  };
+  rec.onend = () => {
+    if(!done){ state.listening = false; onDone(false, 'no-speech'); }
+  };
+  try{ rec.start(); }catch(e){ state.listening = false; onDone(false, 'unsupported'); }
+}
+
+/* ================= CONFETTI ================= */
+function burstConfetti(){
+  const canvas = document.getElementById('confetti');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+  const colors = ['#FF6F5E','#FFC93C','#3DA9FC','#4FBE7A','#A66CFF','#FF8FC7'];
+  const pieces = Array.from({length:120}, () => ({
+    x: Math.random()*canvas.width, y: -20 - Math.random()*canvas.height*0.4,
+    vx: (Math.random()-0.5)*4, vy: 3+Math.random()*5,
+    size: 6+Math.random()*8, color: colors[Math.floor(Math.random()*colors.length)],
+    rot: Math.random()*360, vr: (Math.random()-0.5)*10
+  }));
+  let frame = 0;
+  function step(){
+    frame++;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+      ctx.save();
+      ctx.translate(p.x, p.y); ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
+      ctx.restore();
+    });
+    if(frame < 110) requestAnimationFrame(step);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  step();
+}
+
+function playChime(){
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const notes = [523.25, 659.25, 783.99, 1046.5];
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine'; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime + i*0.12);
+      gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + i*0.12 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + i*0.12 + 0.3);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(ctx.currentTime + i*0.12);
+      osc.stop(ctx.currentTime + i*0.12 + 0.32);
+    });
+  }catch(e){}
+}
+
+function playSoftBlip(){
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const osc = ctx.createOscillator(); const gain = ctx.createGain();
+    osc.type = 'triangle'; osc.frequency.value = 330;
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.25);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime + 0.25);
+  }catch(e){}
+}
+
+/* ================= NAVIGATION (remote-friendly) ================= */
+function goto(screen, opts){
+  state.history.push(state.screen);
+  state.screen = screen;
+  Object.assign(state, opts||{});
+  render();
+}
+function goBack(){
+  if(state.history.length){
+    state.screen = state.history.pop();
+    render();
+  }
+}
+
+function focusables(){
+  return Array.from(document.querySelectorAll('[data-focusable]')).filter(el => el.offsetParent !== null);
+}
+function currentFocused(){
+  return document.querySelector('[data-focusable].focused') || focusables()[0];
+}
+function setFocus(el){
+  focusables().forEach(f => f.classList.remove('focused'));
+  if(el){ el.classList.add('focused'); el.scrollIntoView({block:'nearest', inline:'nearest'}); }
+}
+function moveFocus(dir){
+  const all = focusables();
+  if(!all.length) return;
+  const cur = currentFocused();
+  if(!cur){ setFocus(all[0]); return; }
+  const cr = cur.getBoundingClientRect();
+  const cx = cr.left + cr.width/2, cy = cr.top + cr.height/2;
+  let best = null, bestScore = Infinity;
+  all.forEach(el => {
+    if(el === cur) return;
+    const r = el.getBoundingClientRect();
+    const x = r.left + r.width/2, y = r.top + r.height/2;
+    const dx = x - cx, dy = y - cy;
+    let primary, cross, ok;
+    if(dir === 'ArrowRight'){ primary = dx; cross = dy; ok = dx > 4; }
+    if(dir === 'ArrowLeft'){ primary = -dx; cross = dy; ok = dx < -4; }
+    if(dir === 'ArrowDown'){ primary = dy; cross = dx; ok = dy > 4; }
+    if(dir === 'ArrowUp'){ primary = -dy; cross = dx; ok = dy < -4; }
+    if(!ok) return;
+    const score = primary + Math.abs(cross)*1.5;
+    if(score < bestScore){ bestScore = score; best = el; }
+  });
+  if(best) setFocus(best);
+}
+
+const KEYCODE_ARROWS = {37:'ArrowLeft', 38:'ArrowUp', 39:'ArrowRight', 40:'ArrowDown'};
+let lastNavAt = 0;
+window.addEventListener('keydown', (e) => {
+  if(state.celebrating) return;
+  const activeTag = document.activeElement && document.activeElement.tagName;
+  if(activeTag === 'INPUT' || activeTag === 'TEXTAREA'){
+    if(e.key === 'Escape'){ document.activeElement.blur(); }
+    return;
+  }
+  const key = KEYCODE_ARROWS[e.keyCode] || e.key;
+  const now = Date.now();
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(key)){
+    e.preventDefault();
+    if(now - lastNavAt < 150) return;
+    lastNavAt = now;
+    moveFocus(key);
+  } else if(key === 'Enter' || key === ' ' || e.keyCode === 13 || e.keyCode === 29443){
+    e.preventDefault();
+    const el = currentFocused();
+    if(el) el.click();
+  } else if(key === 'Backspace' || key === 'Escape' || key === 'GoBack' || e.keyCode === 10009 || e.keyCode === 8){
+    e.preventDefault(); goBack();
+  }
+});
+
+/* ================= RENDER HELPERS ================= */
+function avatarPic(who){
+  const photoMap = {child: state.settings.childPhoto, mamma: state.settings.mammaPhoto, papa: state.settings.papaPhoto};
+  const emojiMap = {child: '👧', mamma: '👩', papa: '👨'};
+  const photo = photoMap[who];
+  return photo ? `<img src="${photo}">` : emojiMap[who];
+}
+function playerName(who){
+  if(who === 'child') return state.settings.childName;
+  if(who === 'mamma') return state.settings.mammaName;
+  if(who === 'papa') return state.settings.papaName;
+  return '';
+}
+function categoryStars(cat){
+  const done = state.stars[cat.id] || 0;
+  return `${done}/${cat.items.length}`;
+}
+function resolveItem(item){
+  if(!item.id) return item;
+  const dict = ITEM_I18N[item.id] || SENTENCE_I18N[item.id];
+  if(!dict) return item;
+  const tr = dict[L()] || dict.it;
+  return Object.assign({}, item, tr);
+}
+
+/* ================= SCREENS ================= */
+function renderHome(){
+  const app = document.getElementById('app');
+  const greetName = esc(state.settings.childName);
+  app.innerHTML = `
+    <div class="home">
+      <div class="home-top">
+        <div>
+          <div class="eyebrow">${esc(t('eyebrow'))}</div>
+          <h1 class="home-title">${t('greeting')(`<span>${greetName}</span>`)}</h1>
+          <div class="home-sub">${esc(t('subtitle'))}</div>
+        </div>
+        <div class="home-top-right">
+          <div class="lang-switch">
+            ${Object.entries(LANGS).map(([code,l]) => `
+              <button class="lang-flag tile ${L()===code?'active':''}" data-focusable data-action="set-lang" data-lang="${code}" title="${esc(l.label)}">${l.flag}</button>
+            `).join('')}
+          </div>
+          <button class="settings-btn tile" data-focusable data-action="settings">⚙️</button>
+        </div>
+      </div>
+      <div class="home-grid">
+        ${CATEGORIES.map(cat => `
+          <button class="cat-tile tile" data-focusable data-action="category" data-id="${cat.id}">
+            <div class="emoji">${cat.emoji}</div>
+            <div class="label">${esc(catLabel(cat))}</div>
+            <div class="stars">⭐ ${categoryStars(cat)}</div>
+          </button>
+        `).join('')}
+      </div>
+      <div class="home-footer">
+        <button class="pill-btn challenge ${state.settings.challengeMode?'active':''} tile" data-focusable data-action="toggle-challenge">
+          👧🆚🧑 ${esc(t('challengeLabel'))} ${state.settings.challengeMode?'ON':'OFF'}
+        </button>
+      </div>
+    </div>
+  `;
+  wireActions();
+  setFocus(focusables()[0]);
+}
+
+function renderCategoryStart(catId){
+  state.currentCategory = catId;
+  const cat = CATEGORIES.find(c => c.id === catId);
+  state.order = cat.items.map((_, i) => i).sort(() => Math.random()-0.5);
+  state.currentIndex = 0;
+  state.voiceFails = 0;
+  state.showChoiceFallback = false;
+  state.answering = false;
+  state.turn = 'child';
+  state.quizMode = (state.settings.forcedMode === 'voice' && voiceSupported) ? 'voice' : 'choice';
+  goto('quiz');
+}
+
+function buildChoiceOptions(cat, item){
+  const items = cat.items.map(resolveItem);
+  const others = items.filter(i => i.w !== item.w);
+  const shuffled = others.sort(() => Math.random()-0.5).slice(0,2);
+  const opts = [item, ...shuffled].sort(() => Math.random()-0.5);
+  return opts;
+}
+
+function renderQuiz(){
+  const app = document.getElementById('app');
+  const cat = CATEGORIES.find(c => c.id === state.currentCategory);
+  const itemIdx = state.order[state.currentIndex];
+  const item = resolveItem(cat.items[itemIdx]);
+  const mode = state.showChoiceFallback ? 'choice' : effectiveMode();
+
+  if(!state.choiceOptions.length || state._lastItem !== item.w){
+    state.choiceOptions = buildChoiceOptions(cat, item);
+    state._lastItem = item.w;
+  }
+
+  const isSentence = cat.id === 'frasi';
+
+  const dots = cat.items.map((_, i) => {
+    const orderPos = state.order.indexOf(i);
+    let cls = 'dot';
+    if(orderPos < state.currentIndex) cls += ' done';
+    if(orderPos === state.currentIndex) cls += ' current';
+    return `<div class="${cls}"></div>`;
+  }).join('');
+
+  app.innerHTML = `
+    <div class="screen">
+      <div class="top-bar">
+        <button class="back-btn tile" data-focusable data-action="back">⬅️ ${esc(t('back'))}</button>
+        <div class="progress-dots">${dots}</div>
+        <div class="mode-switch">
+          <button class="mode-pill tile ${state.quizMode==='choice'?'active':''}" data-focusable data-action="set-mode" data-mode="choice">👆 ${esc(t('modeChoice'))}</button>
+          <button class="mode-pill tile ${state.quizMode==='voice'?'active':''} ${!voiceSupported?'disabled':''}" data-focusable data-action="set-mode" data-mode="voice">🎤 ${esc(t('modeVoice'))}</button>
+        </div>
+      </div>
+      <div class="quiz-wrap">
+        <div class="quiz-lang-flag" title="${esc((LANGS[L()]||LANGS.it).label)}">${(LANGS[L()]||LANGS.it).flag}</div>
+        ${state.settings.challengeMode ? `
+          <div class="avatar-row">
+            ${activeRoster().map(who => `
+              <div class="avatar ${state.turn===who?'active':''}">
+                <div class="pic">${avatarPic(who)}</div>
+                <div class="name">${esc(playerName(who))}</div>
+                <div class="score">⭐ ${state.scores[who]}</div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+        <div class="stimulus ${isSentence ? 'stimulus-sentence' : ''}">${item.e}</div>
+        <div class="stimulus-label">${esc(isSentence ? t('questionSentence') : t('questionWord'))}</div>
+        ${mode === 'voice' ? `
+          <div class="voice-controls">
+            <button class="round-btn tile" data-focusable data-action="listen-word">🔊 ${esc(t('listen'))}</button>
+            <button class="round-btn mic tile ${state.listening?'listening':''}" data-focusable data-action="try-voice">
+              ${state.listening ? `👂 ${esc(t('listening'))}` : `🎤 ${esc(t('tryVoice'))}`}
+            </button>
+          </div>
+          <div class="mic-status">${esc(isSentence ? t('micHintSentence') : t('micHintWord'))}</div>
+        ` : `
+          <div class="choice-row ${isSentence ? 'choice-row-sentence' : ''}">
+            ${state.choiceOptions.map(opt => `
+              <button class="choice-tile tile ${isSentence ? 'sentence-tile' : ''}" data-focusable data-action="choice" data-word="${esc(opt.w)}">
+                ${isSentence ? '' : `<div class="emoji">${opt.e}</div>`}
+                <div>${phrase(opt)}${isSentence ? '.' : ''}</div>
+              </button>
+            `).join('')}
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+  wireActions();
+  const preferred = document.querySelector('[data-action="try-voice"]') || document.querySelector('[data-action="choice"]');
+  setFocus(preferred || focusables()[0]);
+}
+
+function nextItem(correct){
+  state.answering = false;
+  const cat = CATEGORIES.find(c => c.id === state.currentCategory);
+  if(correct){
+    state.stars[cat.id] = Math.min(cat.items.length, (state.stars[cat.id]||0) + 1);
+    saveStars();
+    if(state.settings.challengeMode){
+      state.scores[state.turn]++;
+      const roster = activeRoster();
+      const idx = roster.indexOf(state.turn);
+      state.turn = roster[(idx + 1) % roster.length] || 'child';
+    }
+  }
+  state.voiceFails = 0;
+  state.showChoiceFallback = false;
+  state.choiceOptions = [];
+  if(state.currentIndex < state.order.length - 1){
+    state.currentIndex++;
+    render();
+  } else {
+    goto('category-done');
+  }
+}
+
+function celebrate(cb){
+  state.celebrating = true;
+  const app = document.getElementById('app');
+  const praiseList = PRAISE();
+  const praise = praiseList[Math.floor(Math.random()*praiseList.length)];
+  const overlay = document.createElement('div');
+  overlay.className = 'celebrate-overlay';
+  overlay.innerHTML = `
+    <div class="celebrate-emoji">🎉</div>
+    <div class="celebrate-text">${praise}</div>
+  `;
+  document.body.appendChild(overlay);
+  burstConfetti();
+  playChime();
+  speak(praise, {excited:true});
+  setTimeout(() => {
+    document.body.removeChild(overlay);
+    state.celebrating = false;
+    cb();
+  }, 1600);
+}
+
+function renderCategoryDone(){
+  const app = document.getElementById('app');
+  const cat = CATEGORIES.find(c => c.id === state.currentCategory);
+  app.innerHTML = `
+    <div class="screen">
+      <div class="quiz-wrap">
+        <div class="stimulus">🏆</div>
+        <h2 style="font-size:3vw;color:var(--primary-deep)">${esc(t('finished')(catLabel(cat)))}</h2>
+        <div class="choice-row">
+          <button class="choice-tile tile" data-focusable data-action="category" data-id="${cat.id}">
+            <div class="emoji">🔁</div><div>${esc(t('replay'))}</div>
+          </button>
+          <button class="choice-tile tile" data-focusable data-action="home">
+            <div class="emoji">🏠</div><div>${esc(t('home'))}</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  wireActions();
+  setFocus(focusables()[0]);
+}
+
+function renderSettings(){
+  const app = document.getElementById('app');
+  const s = state.settings;
+  app.innerHTML = `
+    <div class="screen">
+      <div class="top-bar">
+        <button class="back-btn tile" data-focusable data-action="home">⬅️ ${esc(t('back'))}</button>
+        <h2 style="font-size:2vw;">⚙️ ${esc(t('settingsTitle'))}</h2>
+        <div style="width:8vw"></div>
+      </div>
+      <div class="settings-form">
+        <div class="field">
+          <label>${esc(t('childNameLabel'))}</label>
+          <input type="text" id="childName" data-focusable value="${esc(s.childName)}">
+        </div>
+        <div class="field">
+          <div class="photo-row">
+            <div class="photo-preview">${avatarPic('child')}</div>
+            <label class="upload-btn tile" data-focusable tabindex="0">
+              📷 ${esc(t('uploadChildPhoto'))}
+              <input type="file" accept="image/*" id="childPhotoInput" style="display:none">
+            </label>
+          </div>
+        </div>
+        <div class="field">
+          <label>${esc(t('mammaNameLabel'))}</label>
+          <input type="text" id="mammaName" data-focusable value="${esc(s.mammaName)}">
+        </div>
+        <div class="field">
+          <div class="photo-row">
+            <div class="photo-preview">${avatarPic('mamma')}</div>
+            <label class="upload-btn tile" data-focusable tabindex="0">
+              📷 ${esc(t('uploadMammaPhoto'))}
+              <input type="file" accept="image/*" id="mammaPhotoInput" style="display:none">
+            </label>
+            <button class="mode-pill tile ${s.mammaEnabled?'active':''}" data-focusable data-action="toggle-mamma-player">${s.mammaEnabled?'✅':'⬜'} ${esc(t('playsInChallenge'))}</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>${esc(t('papaNameLabel'))}</label>
+          <input type="text" id="papaName" data-focusable value="${esc(s.papaName)}">
+        </div>
+        <div class="field">
+          <div class="photo-row">
+            <div class="photo-preview">${avatarPic('papa')}</div>
+            <label class="upload-btn tile" data-focusable tabindex="0">
+              📷 ${esc(t('uploadPapaPhoto'))}
+              <input type="file" accept="image/*" id="papaPhotoInput" style="display:none">
+            </label>
+            <button class="mode-pill tile ${s.papaEnabled?'active':''}" data-focusable data-action="toggle-papa-player">${s.papaEnabled?'✅':'⬜'} ${esc(t('playsInChallenge'))}</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>${esc(t('startModeLabel'))}</label>
+          <div class="choice-row">
+            <button class="choice-tile tile" data-focusable data-action="mode" data-mode="choice" style="${s.forcedMode==='choice'?'box-shadow:0 0 0 4px var(--focus-ring), var(--shadow)':''}">
+              <div class="emoji">👆</div><div>${esc(t('modeChoice'))}</div>
+            </button>
+            <button class="choice-tile tile" data-focusable data-action="mode" data-mode="voice" style="${s.forcedMode==='voice'?'box-shadow:0 0 0 4px var(--focus-ring), var(--shadow)':''}">
+              <div class="emoji">🎤</div><div>${esc(t('modeVoice'))}</div>
+            </button>
+          </div>
+          <div class="mic-status" style="margin-top:1vh">
+            ${esc(t('modeHint'))}<br>
+            ${esc(voiceSupported ? t('micAvailable') : t('micUnavailable'))}
+          </div>
+        </div>
+        <div class="field">
+          <button class="pill-btn tile" data-focusable data-action="reset-stars" style="background:var(--ink-soft)">${esc(t('resetStars'))}</button>
+        </div>
+      </div>
+    </div>
+  `;
+  wireActions();
+
+  document.getElementById('childName').addEventListener('change', e => { state.settings.childName = e.target.value || 'Valeria'; saveSettings(); });
+  document.getElementById('mammaName').addEventListener('change', e => { state.settings.mammaName = e.target.value || 'Mamma'; saveSettings(); });
+  document.getElementById('papaName').addEventListener('change', e => { state.settings.papaName = e.target.value || 'Papà'; saveSettings(); });
+  document.getElementById('childPhotoInput').addEventListener('change', e => handlePhoto(e, 'childPhoto'));
+  document.getElementById('mammaPhotoInput').addEventListener('change', e => handlePhoto(e, 'mammaPhoto'));
+  document.getElementById('papaPhotoInput').addEventListener('change', e => handlePhoto(e, 'papaPhoto'));
+
+  setFocus(focusables()[0]);
+}
+
+function handlePhoto(e, key){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const img = new Image();
+    img.onload = () => {
+      const size = 200;
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const scale = Math.max(size/img.width, size/img.height);
+      const w = img.width*scale, h = img.height*scale;
+      ctx.drawImage(img, (size-w)/2, (size-h)/2, w, h);
+      state.settings[key] = canvas.toDataURL('image/jpeg', 0.8);
+      saveSettings();
+      renderSettings();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ================= ACTIONS ================= */
+function wireActions(){
+  document.querySelectorAll('[data-action]').forEach(el => {
+    el.onclick = () => handleAction(el.dataset);
+  });
+}
+
+function handleAction(data){
+  switch(data.action){
+    case 'settings': goto('settings'); break;
+    case 'home': state.screen = 'home'; state.history = []; render(); break;
+    case 'back': goBack(); break;
+    case 'category': renderCategoryStart(data.id); break;
+    case 'toggle-challenge':
+      state.settings.challengeMode = !state.settings.challengeMode;
+      state.scores = {child:0, mamma:0, papa:0}; state.turn = 'child';
+      saveSettings(); render(); break;
+    case 'toggle-mamma-player':
+      state.settings.mammaEnabled = !state.settings.mammaEnabled;
+      saveSettings(); renderSettings(); break;
+    case 'toggle-papa-player':
+      state.settings.papaEnabled = !state.settings.papaEnabled;
+      saveSettings(); renderSettings(); break;
+    case 'mode':
+      state.settings.forcedMode = data.mode; saveSettings(); renderSettings(); break;
+    case 'reset-stars':
+      state.stars = {}; saveStars(); renderSettings(); break;
+    case 'set-lang':
+      state.settings.lang = data.lang; saveSettings(); applyDocumentLang(); render(); break;
+    case 'set-mode': {
+      if(data.mode === 'voice' && !voiceSupported){
+        speak(t('micUnavailableToast'));
+        break;
+      }
+      state.quizMode = data.mode;
+      state.voiceFails = 0;
+      state.showChoiceFallback = false;
+      render();
+      break;
+    }
+    case 'listen-word': {
+      const cat = CATEGORIES.find(c => c.id === state.currentCategory);
+      const item = resolveItem(cat.items[state.order[state.currentIndex]]);
+      const langOverride = cat.id === 'lettere' ? 'it-IT' : undefined;
+      speak(phrase(item), {teach:true, langOverride});
+      break;
+    }
+    case 'try-voice': {
+      if(state.listening) break;
+      const cat = CATEGORIES.find(c => c.id === state.currentCategory);
+      const item = resolveItem(cat.items[state.order[state.currentIndex]]);
+      const langOverride = cat.id === 'lettere' ? 'it-IT' : undefined;
+      startListening(item, (ok, err) => {
+        if(ok){
+          celebrate(() => nextItem(true));
+        } else {
+          state.voiceFails++;
+          if(state.voiceFails >= 2){
+            state.showChoiceFallback = true;
+            render();
+          } else {
+            playSoftBlip();
+            const retryList = RETRY();
+            speak(retryList[Math.floor(Math.random()*retryList.length)]);
+            render();
+          }
+        }
+      }, langOverride);
+      break;
+    }
+    case 'choice': {
+      if(state.answering) break;
+      const cat = CATEGORIES.find(c => c.id === state.currentCategory);
+      const item = resolveItem(cat.items[state.order[state.currentIndex]]);
+      if(normalize(data.word) === normalize(item.w)){
+        state.answering = true;
+        const langOverride = cat.id === 'lettere' ? 'it-IT' : undefined;
+        speak(phrase(item), {teach:true, langOverride, onEnd: () => celebrate(() => nextItem(true))});
+      } else {
+        playSoftBlip();
+        speak(RETRY()[0]);
+      }
+      break;
+    }
+  }
+}
+
+/* ================= UTIL ================= */
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+function phrase(item){
+  if(!item.art) return cap(item.w);
+  const artCap = cap(item.art);
+  const sep = item.art.endsWith("'") ? '' : ' ';
+  return `${artCap}${sep}${item.w}`;
+}
+
+/* ================= MAIN RENDER ================= */
+function render(){
+  if(state.screen === 'home') renderHome();
+  else if(state.screen === 'quiz') renderQuiz();
+  else if(state.screen === 'category-done') renderCategoryDone();
+  else if(state.screen === 'settings') renderSettings();
+}
+
+render();
+</script>
+
+</body></html>
