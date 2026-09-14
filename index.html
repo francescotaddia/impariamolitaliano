@@ -232,7 +232,7 @@ canvas#confetti{ position:fixed; inset:0; pointer-events:none; z-index:51;}
 
 <div id="app"></div>
 <canvas id="confetti"></canvas>
-<div id="debugPanel" style="position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.85);color:#0f0;font-family:monospace;font-size:14px;padding:10px;z-index:9999;max-height:30vh;overflow:auto;white-space:pre-wrap;"></div>
+<div id="debugPanel" style="position:fixed;top:5%;left:5%;right:5%;background:#FF0000;color:#FFFFFF;font-family:monospace;font-weight:900;font-size:22px;padding:20px;z-index:999999;border:8px solid yellow;white-space:pre-wrap;">DEBUG v3 - IN ATTESA DI UN TASTO...</div>
 
 <script>
 /* ================= LANGUAGES ================= */
@@ -846,7 +846,7 @@ function logDebugEvent(e){
   debugLog.unshift(`key="${e.key}" code="${e.code}" keyCode=${e.keyCode}`);
   if(debugLog.length > 8) debugLog.pop();
   const panel = document.getElementById('debugPanel');
-  if(panel) panel.textContent = 'ULTIMI TASTI (nuovo in alto):\n' + debugLog.join('\n');
+  if(panel) panel.textContent = 'DEBUG v3 - ULTIMI TASTI (nuovo in alto):\n' + debugLog.join('\n');
 }
 window.addEventListener('keydown', logDebugEvent, true);
 
