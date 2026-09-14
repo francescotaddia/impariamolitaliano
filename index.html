@@ -1311,7 +1311,7 @@ function handleAction(data){
       const cat = CATEGORIES.find(c => c.id === state.currentCategory);
       const item = resolveItem(cat.items[state.order[state.currentIndex]]);
       const langOverride = cat.id === 'lettere' ? 'it-IT' : undefined;
-      speak(phrase(item), {teach:true, langOverride});
+      speak(speechText(item, cat.id), {teach:true, langOverride});
       break;
     }
     case 'try-voice': {
@@ -1344,7 +1344,7 @@ function handleAction(data){
       if(normalize(data.word) === normalize(item.w)){
         state.answering = true;
         const langOverride = cat.id === 'lettere' ? 'it-IT' : undefined;
-        speak(phrase(item), {teach:true, langOverride, onEnd: () => celebrate(item, () => nextItem(true))});
+        speak(speechText(item, cat.id), {teach:true, langOverride, onEnd: () => celebrate(item, () => nextItem(true))});
       } else {
         playSoftBlip();
         speak(RETRY(playerGender(state.turn))[0]);
@@ -1362,6 +1362,10 @@ function phrase(item){
   const artCap = cap(item.art);
   const sep = item.art.endsWith("'") ? '' : ' ';
   return `${artCap}${sep}${item.w}`;
+}
+function speechText(item, catId){
+  if(catId === 'lettere') return item.w;
+  return phrase(item);
 }
 
 /* ================= MAIN RENDER ================= */
