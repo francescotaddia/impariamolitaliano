@@ -232,7 +232,6 @@ canvas#confetti{ position:fixed; inset:0; pointer-events:none; z-index:51;}
 
 <div id="app"></div>
 <canvas id="confetti"></canvas>
-<div id="voiceDebug" style="position:fixed;bottom:0;left:0;right:0;background:#0033CC;color:#FFFFFF;font-family:monospace;font-weight:700;font-size:16px;padding:10px;z-index:999999;border-top:6px solid cyan;white-space:pre-wrap;pointer-events:none;max-height:35vh;overflow:auto;"></div>
 
 <script>
 /* ================= LANGUAGES ================= */
@@ -634,29 +633,16 @@ try{
 }catch(e){ voiceSupported = false; }
 
 let allVoices = [];
-function updateVoiceDebug(extra){
-  const panel = document.getElementById('voiceDebug');
-  if(!panel) return;
-  const hasSynth = !!window.speechSynthesis;
-  let lines = [];
-  lines.push('VOICE DEBUG');
-  lines.push('speechSynthesis esiste: ' + hasSynth);
-  lines.push('numero voci: ' + allVoices.length);
-  allVoices.slice(0,6).forEach(v => lines.push(' - ' + v.name + ' (' + v.lang + ')'));
-  if(extra) lines.push(extra);
-  panel.textContent = lines.join('\n');
-}
 function loadVoices(){
   try{ allVoices = speechSynthesis.getVoices(); }
   catch(e){}
-  updateVoiceDebug();
 }
 if(window.speechSynthesis){
   loadVoices();
   speechSynthesis.onvoiceschanged = loadVoices;
-} else {
-  updateVoiceDebug();
 }
+let ttsProbed = false;
+let ttsWorking = true;
 function pickVoice(bcp47){
   const prefix = (bcp47 || (LANGS[L()]||LANGS.it).bcp47).split('-')[0].toLowerCase();
   const langVoices = allVoices.filter(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
@@ -668,7 +654,7 @@ function pickVoice(bcp47){
 function speak(text, opts){
   opts = opts || {};
   try{
-    if(!window.speechSynthesis){ updateVoiceDebug('speechSynthesis assente'); if(opts.onEnd) opts.onEnd(); return; }
+    if(!window.speechSynthesis || !ttsWorking){ if(opts.onEnd) opts.onEnd(); return; }
     const u = new SpeechSynthesisUtterance(text);
     const bcp = opts.langOverride || (LANGS[L()]||LANGS.it).bcp47;
     u.lang = bcp;
@@ -677,21 +663,24 @@ function speak(text, opts){
     u.rate = opts.excited ? 1.12 : (opts.teach ? 0.95 : 1.02);
     u.pitch = opts.excited ? 1.55 : (opts.teach ? 1.2 : 1.35);
     u.volume = 1;
-    updateVoiceDebug('speak() chiamato con testo: "' + text + '" voce scelta: ' + (v ? v.name : 'NESSUNA (default)') + ' | click isTrusted=' + window.__lastClickTrusted + ' | speechSynthesis.speaking=' + speechSynthesis.speaking + ' pending=' + speechSynthesis.pending + ' paused=' + speechSynthesis.paused);
-    u.onstart = () => updateVoiceDebug('EVENTO onstart ricevuto (sta parlando)');
-    u.onend = () => updateVoiceDebug('EVENTO onend ricevuto (finito)');
-    u.onerror = (ev) => updateVoiceDebug('EVENTO onerror: ' + ev.error);
+    let started = false;
+    u.onstart = () => { started = true; };
+    if(!ttsProbed){
+      ttsProbed = true;
+      setTimeout(() => {
+        if(!started){ ttsWorking = false; render(); }
+      }, 1200);
+    }
     if(opts.onEnd){
       let done = false;
-      const origOnEnd = u.onend, origOnError = u.onerror;
       const finish = () => { if(done) return; done = true; opts.onEnd(); };
-      u.onend = (ev) => { origOnEnd(ev); finish(); };
-      u.onerror = (ev) => { origOnError(ev); finish(); };
+      u.onend = finish;
+      u.onerror = finish;
       setTimeout(finish, 3000);
     }
     speechSynthesis.cancel();
     speechSynthesis.speak(u);
-  }catch(e){ updateVoiceDebug('ECCEZIONE: ' + e.message); if(opts.onEnd) opts.onEnd(); }
+  }catch(e){ if(opts.onEnd) opts.onEnd(); }
 }
 
 function normalize(s){
@@ -873,27 +862,6 @@ function moveFocus(dir){
   if(best) setFocus(best);
 }
 
-/* ================= DEBUG PANEL (temporaneo) ================= */
-const debugLog = [];
-function pushDebug(line){
-  debugLog.unshift(line);
-  if(debugLog.length > 8) debugLog.pop();
-  const panel = document.getElementById('debugPanel');
-  if(panel) panel.textContent = 'DEBUG v4 - ULTIMI EVENTI (nuovo in alto):\n' + debugLog.join('\n');
-}
-window.addEventListener('keydown', (e) => {
-  pushDebug(`KEYDOWN key="${e.key}" code="${e.code}" keyCode=${e.keyCode}`);
-}, true);
-window.addEventListener('focusin', (e) => {
-  const tag = e.target.tagName;
-  const cls = e.target.className || '';
-  pushDebug(`FOCUSIN <${tag}> class="${cls}"`);
-}, true);
-window.addEventListener('click', (e) => {
-  const tag = e.target.tagName;
-  pushDebug(`CLICK <${tag}>`);
-}, true);
-
 const KEYCODE_ARROWS = {37:'ArrowLeft', 38:'ArrowUp', 39:'ArrowRight', 40:'ArrowDown'};
 let lastNavAt = 0;
 window.addEventListener('keydown', (e) => {
@@ -1055,7 +1023,7 @@ function renderQuiz(){
         <div class="stimulus-label">${esc(isSentence ? t('questionSentence') : t('questionWord'))}</div>
         ${mode === 'voice' ? `
           <div class="voice-controls">
-            <button class="round-btn tile" data-focusable data-action="listen-word">🔊 ${esc(t('listen'))}</button>
+            ${ttsWorking ? `<button class="round-btn tile" data-focusable data-action="listen-word">🔊 ${esc(t('listen'))}</button>` : ''}
             <button class="round-btn mic tile ${state.listening?'listening':''}" data-focusable data-action="try-voice">
               ${state.listening ? `👂 ${esc(t('listening'))}` : `🎤 ${esc(t('tryVoice'))}`}
             </button>
@@ -1259,7 +1227,7 @@ function handlePhoto(e, key){
 /* ================= ACTIONS ================= */
 function wireActions(){
   document.querySelectorAll('[data-action]').forEach(el => {
-    el.onclick = (e) => { window.__lastClickTrusted = e.isTrusted; handleAction(el.dataset); };
+    el.onclick = () => handleAction(el.dataset);
   });
 }
 
