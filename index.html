@@ -203,7 +203,9 @@ button{ font-family:inherit; }
   position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
   flex-direction:column; gap:2vh; background: rgba(255,246,233,0.92); z-index:50;
 }
-.celebrate-emoji{ font-size:14vw; animation: bounce .6s ease infinite alternate; }
+.celebrate-figure{ font-size:9vw; line-height:1; }
+.celebrate-word{ font-size:3.4vw; font-weight:800; color:var(--ink); font-family:'Baloo 2'; text-align:center; text-wrap:balance; }
+.celebrate-emoji{ font-size:10vw; animation: bounce .6s ease infinite alternate; }
 @keyframes bounce{ from{ transform: translateY(0) rotate(-4deg);} to{ transform: translateY(-2vh) rotate(4deg);} }
 .celebrate-text{ font-size:4vw; color:var(--primary-deep); font-family:'Baloo 2'; }
 canvas#confetti{ position:fixed; inset:0; pointer-events:none; z-index:51;}
@@ -381,6 +383,8 @@ const ITEM_I18N = {
   mucca:{ it:{w:'mucca',art:'una'}, en:{w:'cow',art:'a'}, sv:{w:'ko',art:'en'}, fr:{w:'vache',art:'une'}, ar:{w:'بقرة'} },
   rana:{ it:{w:'rana',art:'una'}, en:{w:'frog',art:'a'}, sv:{w:'groda',art:'en'}, fr:{w:'grenouille',art:'une'}, ar:{w:'ضفدع'} },
   farfalla:{ it:{w:'farfalla',art:'una'}, en:{w:'butterfly',art:'a'}, sv:{w:'fjäril',art:'en'}, fr:{w:'papillon',art:'un'}, ar:{w:'فراشة'} },
+  pesce:{ it:{w:'pesce',art:'un'}, en:{w:'fish',art:'a'}, sv:{w:'fisk',art:'en'}, fr:{w:'poisson',art:'un'}, ar:{w:'سمكة'} },
+  gallina:{ it:{w:'gallina',art:'una'}, en:{w:'hen',art:'a'}, sv:{w:'höna',art:'en'}, fr:{w:'poule',art:'une'}, ar:{w:'دجاجة'} },
 
   zucca:{ it:{w:'zucca',art:'una'}, en:{w:'pumpkin',art:'a'}, sv:{w:'pumpa',art:'en'}, fr:{w:'citrouille',art:'une'}, ar:{w:'يقطين'} },
   fantasma:{ it:{w:'fantasma',art:'un'}, en:{w:'ghost',art:'a'}, sv:{w:'spöke',art:'ett'}, fr:{w:'fantôme',art:'un'}, ar:{w:'شبح'} },
@@ -390,6 +394,9 @@ const ITEM_I18N = {
   caramella:{ it:{w:'caramella',art:'una'}, en:{w:'candy',art:'a'}, sv:{w:'godis',art:'ett'}, fr:{w:'bonbon',art:'un'}, ar:{w:'حلوى'} },
   mostro:{ it:{w:'mostro',art:'un'}, en:{w:'monster',art:'a'}, sv:{w:'monster',art:'ett'}, fr:{w:'monstre',art:'un'}, ar:{w:'وحش'} },
   scheletro:{ it:{w:'scheletro',art:'uno'}, en:{w:'skeleton',art:'a'}, sv:{w:'skelett',art:'ett'}, fr:{w:'squelette',art:'un'}, ar:{w:'هيكل عظمي'} },
+  vampiro:{ it:{w:'vampiro',art:'un'}, en:{w:'vampire',art:'a'}, sv:{w:'vampyr',art:'en'}, fr:{w:'vampire',art:'un'}, ar:{w:'مصاص دماء'} },
+  ragnatela:{ it:{w:'ragnatela',art:'una'}, en:{w:'spiderweb',art:'a'}, sv:{w:'spindelnät',art:'ett'}, fr:{w:"toile d'araignée",art:'une'}, ar:{w:'نسيج العنكبوت'} },
+  gufo:{ it:{w:'gufo',art:'un'}, en:{w:'owl',art:'an'}, sv:{w:'uggla',art:'en'}, fr:{w:'hibou',art:'un'}, ar:{w:'بومة'} },
 
   neve:{ it:{w:'neve',art:'la'}, en:{w:'snow',art:'the'}, sv:{w:'snön'}, fr:{w:'neige',art:'la'}, ar:{w:'الثلج'} },
   pupazzo_neve:{ it:{w:'pupazzo di neve',art:'un', accepts:['pupazzo di neve','pupazzo','neve']}, en:{w:'snowman',art:'a'}, sv:{w:'snögubbe',art:'en'}, fr:{w:'bonhomme de neige',art:'un'}, ar:{w:'رجل الثلج'} },
@@ -399,6 +406,9 @@ const ITEM_I18N = {
   guanto:{ it:{w:'guanto',art:'un', accepts:['guanto','guanti']}, en:{w:'glove',art:'a'}, sv:{w:'vante',art:'en'}, fr:{w:'gant',art:'un'}, ar:{w:'قفاز'} },
   sciarpa:{ it:{w:'sciarpa',art:'una'}, en:{w:'scarf',art:'a'}, sv:{w:'halsduk',art:'en'}, fr:{w:'écharpe',art:'une'}, ar:{w:'وشاح'} },
   castello:{ it:{w:'castello',art:'un'}, en:{w:'castle',art:'a'}, sv:{w:'slott',art:'ett'}, fr:{w:'château',art:'un'}, ar:{w:'قصر'} },
+  orso_polare:{ it:{w:'orso polare',art:'un', accepts:['orso polare','orso']}, en:{w:'polar bear',art:'a'}, sv:{w:'isbjörn',art:'en'}, fr:{w:'ours polaire',art:'un'}, ar:{w:'دب قطبي'} },
+  pinguino:{ it:{w:'pinguino',art:'un'}, en:{w:'penguin',art:'a'}, sv:{w:'pingvin',art:'en'}, fr:{w:'pingouin',art:'un'}, ar:{w:'بطريق'} },
+  montagna_innevata:{ it:{w:'montagna innevata',art:'una', accepts:['montagna innevata','montagna']}, en:{w:'snowy mountain',art:'a'}, sv:{w:'snöigt berg',art:'ett'}, fr:{w:'montagne enneigée',art:'une'}, ar:{w:'جبل مغطى بالثلج'} },
 
   sole:{ it:{w:'sole',art:'il'}, en:{w:'sun',art:'the'}, sv:{w:'solen'}, fr:{w:'soleil',art:'le'}, ar:{w:'الشمس'} },
   luna:{ it:{w:'luna',art:'la'}, en:{w:'moon',art:'the'}, sv:{w:'månen'}, fr:{w:'lune',art:'la'}, ar:{w:'القمر'} },
@@ -407,10 +417,13 @@ const ITEM_I18N = {
   arcobaleno:{ it:{w:'arcobaleno',art:'un'}, en:{w:'rainbow',art:'a'}, sv:{w:'regnbåge',art:'en'}, fr:{w:'arc-en-ciel',art:'un'}, ar:{w:'قوس قزح'} },
   pioggia:{ it:{w:'pioggia',art:'la'}, en:{w:'rain',art:'the'}, sv:{w:'regnet'}, fr:{w:'pluie',art:'la'}, ar:{w:'المطر'} },
   fulmine:{ it:{w:'fulmine',art:'un'}, en:{w:'lightning bolt',art:'a'}, sv:{w:'blixt',art:'en'}, fr:{w:'éclair',art:'un'}, ar:{w:'برق'} },
+  stella_cadente:{ it:{w:'stella cadente',art:'una', accepts:['stella cadente','stella']}, en:{w:'shooting star',art:'a'}, sv:{w:'stjärnfall',art:'ett'}, fr:{w:'étoile filante',art:'une'}, ar:{w:'نجم متساقط'} },
+  tramonto:{ it:{w:'tramonto',art:'il'}, en:{w:'sunset',art:'the'}, sv:{w:'solnedgången'}, fr:{w:'coucher de soleil',art:'le'}, ar:{w:'الغروب'} },
 
   unicorno:{ it:{w:'unicorno',art:'un'}, en:{w:'unicorn',art:'a'}, sv:{w:'enhörning',art:'en'}, fr:{w:'licorne',art:'une'}, ar:{w:'وحيد قرن'} },
   cuore:{ it:{w:'cuore',art:'un'}, en:{w:'heart',art:'a'}, sv:{w:'hjärta',art:'ett'}, fr:{w:'cœur',art:'un'}, ar:{w:'قلب'} },
   fiore:{ it:{w:'fiore',art:'un'}, en:{w:'flower',art:'a'}, sv:{w:'blomma',art:'en'}, fr:{w:'fleur',art:'une'}, ar:{w:'زهرة'} },
+  diamante:{ it:{w:'diamante',art:'un'}, en:{w:'diamond',art:'a'}, sv:{w:'diamant',art:'en'}, fr:{w:'diamant',art:'un'}, ar:{w:'ماسة'} },
 
   rosso:{ it:{w:'rosso'}, en:{w:'red'}, sv:{w:'röd'}, fr:{w:'rouge'}, ar:{w:'أحمر'} },
   blu:{ it:{w:'blu'}, en:{w:'blue'}, sv:{w:'blå'}, fr:{w:'bleu'}, ar:{w:'أزرق'} },
@@ -420,6 +433,8 @@ const ITEM_I18N = {
   arancione:{ it:{w:'arancione'}, en:{w:'orange'}, sv:{w:'orange'}, fr:{w:'orange'}, ar:{w:'برتقالي'} },
   nero:{ it:{w:'nero'}, en:{w:'black'}, sv:{w:'svart'}, fr:{w:'noir'}, ar:{w:'أسود'} },
   bianco:{ it:{w:'bianco'}, en:{w:'white'}, sv:{w:'vit'}, fr:{w:'blanc'}, ar:{w:'أبيض'} },
+  marrone:{ it:{w:'marrone'}, en:{w:'brown'}, sv:{w:'brun'}, fr:{w:'marron'}, ar:{w:'بني'} },
+  rosa_colore:{ it:{w:'rosa'}, en:{w:'pink'}, sv:{w:'rosa'}, fr:{w:'rose'}, ar:{w:'وردي'} },
 
   n1:{ it:{w:'uno'}, en:{w:'one'}, sv:{w:'ett'}, fr:{w:'un'}, ar:{w:'واحد'} },
   n2:{ it:{w:'due'}, en:{w:'two'}, sv:{w:'två'}, fr:{w:'deux'}, ar:{w:'اثنان'} },
@@ -438,19 +453,26 @@ const ITEM_I18N = {
   margherita:{ it:{w:'margherita',art:'una'}, en:{w:'daisy',art:'a'}, sv:{w:'tusensköna',art:'en'}, fr:{w:'marguerite',art:'une'}, ar:{w:'أقحوان'} },
   fiore_ciliegio:{ it:{w:'fiore di ciliegio',art:'un', accepts:['fiore di ciliegio','fiore','ciliegio']}, en:{w:'cherry blossom',art:'a'}, sv:{w:'körsbärsblomma',art:'en'}, fr:{w:'fleur de cerisier',art:'une'}, ar:{w:'زهر الكرز'} },
   trifoglio:{ it:{w:'trifoglio',art:'un'}, en:{w:'clover',art:'a'}, sv:{w:'klöver',art:'en'}, fr:{w:'trèfle',art:'un'}, ar:{w:'برسيم'} },
+  ibisco:{ it:{w:'ibisco',art:'un'}, en:{w:'hibiscus',art:'a'}, sv:{w:'hibiskus',art:'en'}, fr:{w:'hibiscus',art:'un'}, ar:{w:'زهرة الكركديه'} },
+  loto:{ it:{w:'loto',art:'un', accepts:['loto','fiore di loto']}, en:{w:'lotus',art:'a'}, sv:{w:'lotus',art:'en'}, fr:{w:'lotus',art:'un'}, ar:{w:'زهرة اللوتس'} },
+  fiore_bianco:{ it:{w:'fiore bianco',art:'un', accepts:['fiore bianco','fiore']}, en:{w:'white flower',art:'a'}, sv:{w:'vit blomma',art:'en'}, fr:{w:'fleur blanche',art:'une'}, ar:{w:'زهرة بيضاء'} },
 
   principessa:{ it:{w:'principessa',art:'una'}, en:{w:'princess',art:'a'}, sv:{w:'prinsessa',art:'en'}, fr:{w:'princesse',art:'une'}, ar:{w:'أميرة'} },
   principe:{ it:{w:'principe',art:'un'}, en:{w:'prince',art:'a'}, sv:{w:'prins',art:'en'}, fr:{w:'prince',art:'un'}, ar:{w:'أمير'} },
   corona:{ it:{w:'corona',art:'una'}, en:{w:'crown',art:'a'}, sv:{w:'krona',art:'en'}, fr:{w:'couronne',art:'une'}, ar:{w:'تاج'} },
   bacchetta_magica:{ it:{w:'bacchetta magica',art:'una', accepts:['bacchetta magica','bacchetta']}, en:{w:'magic wand',art:'a'}, sv:{w:'trollspö',art:'ett'}, fr:{w:'baguette magique',art:'une'}, ar:{w:'عصا سحرية'} },
   cavallo:{ it:{w:'cavallo',art:'un'}, en:{w:'horse',art:'a'}, sv:{w:'häst',art:'en'}, fr:{w:'cheval',art:'un'}, ar:{w:'حصان'} },
+  anello:{ it:{w:'anello',art:'un'}, en:{w:'ring',art:'a'}, sv:{w:'ring',art:'en'}, fr:{w:'bague',art:'une'}, ar:{w:'خاتم'} },
+  vestito:{ it:{w:'vestito',art:'un'}, en:{w:'dress',art:'a'}, sv:{w:'klänning',art:'en'}, fr:{w:'robe',art:'une'}, ar:{w:'فستان'} },
 
   dinosauro:{ it:{w:'dinosauro',art:'un'}, en:{w:'dinosaur',art:'a'}, sv:{w:'dinosaurie',art:'en'}, fr:{w:'dinosaure',art:'un'}, ar:{w:'ديناصور'} },
   tirannosauro:{ it:{w:'tirannosauro',art:'un', accepts:['tirannosauro','t-rex','trex']}, en:{w:'T-Rex',art:'a'}, sv:{w:'T-Rex',art:'en'}, fr:{w:'T-Rex',art:'un'}, ar:{w:'تي ريكس'} },
   uovo:{ it:{w:'uovo',art:'un'}, en:{w:'egg',art:'an'}, sv:{w:'ägg',art:'ett'}, fr:{w:'œuf',art:'un'}, ar:{w:'بيضة'} },
   osso:{ it:{w:'osso',art:'un'}, en:{w:'bone',art:'a'}, sv:{w:'ben',art:'ett'}, fr:{w:'os',art:'un'}, ar:{w:'عظمة'} },
   vulcano:{ it:{w:'vulcano',art:'un'}, en:{w:'volcano',art:'a'}, sv:{w:'vulkan',art:'en'}, fr:{w:'volcan',art:'un'}, ar:{w:'بركان'} },
-  albero:{ it:{w:'albero',art:'un'}, en:{w:'tree',art:'a'}, sv:{w:'träd',art:'ett'}, fr:{w:'arbre',art:'un'}, ar:{w:'شجرة'} }
+  albero:{ it:{w:'albero',art:'un'}, en:{w:'tree',art:'a'}, sv:{w:'träd',art:'ett'}, fr:{w:'arbre',art:'un'}, ar:{w:'شجرة'} },
+  fossile:{ it:{w:'fossile',art:'un'}, en:{w:'fossil',art:'a'}, sv:{w:'fossil',art:'ett'}, fr:{w:'fossile',art:'un'}, ar:{w:'أحفورة'} },
+  impronta:{ it:{w:'impronta',art:"un'"}, en:{w:'footprint',art:'a'}, sv:{w:'fotavtryck',art:'ett'}, fr:{w:'empreinte',art:'une'}, ar:{w:'أثر قدم'} }
 };
 
 /* ================= SENTENCES (rebus) ================= */
@@ -492,81 +514,100 @@ const SENTENCES = [
 ];
 
 /* ================= CATEGORIES ================= */
+const LETTERE_ITEMS = ['a','b','c','d','e','f','g','h','i','l','m','n','o','p','q','r','s','t','u','v','z']
+  .map(l => ({w:l, e: l.toUpperCase() + ' ' + l}));
+
 const CATEGORIES = [
   {id:'animali', emoji:'🦁', items:[
     {id:'leone', e:'🦁'},{id:'elefante', e:'🐘'},{id:'coniglio', e:'🐰'},{id:'gatto', e:'🐱'},
     {id:'cane', e:'🐶'},{id:'orso', e:'🐻'},{id:'tigre', e:'🐯'},{id:'mucca', e:'🐮'},
-    {id:'rana', e:'🐸'},{id:'farfalla', e:'🦋'}
+    {id:'rana', e:'🐸'},{id:'farfalla', e:'🦋'},{id:'pesce', e:'🐟'},{id:'gallina', e:'🐔'}
   ]},
   {id:'halloween', emoji:'🎃', items:[
     {id:'zucca', e:'🎃'},{id:'fantasma', e:'👻'},{id:'strega', e:'🧙'},{id:'pipistrello', e:'🦇'},
-    {id:'ragno', e:'🕷️'},{id:'caramella', e:'🍬'},{id:'mostro', e:'👹'},{id:'scheletro', e:'💀'}
+    {id:'ragno', e:'🕷️'},{id:'caramella', e:'🍬'},{id:'mostro', e:'👹'},{id:'scheletro', e:'💀'},
+    {id:'vampiro', e:'🧛'},{id:'ragnatela', e:'🕸️'},{id:'gufo', e:'🦉'}
   ]},
   {id:'ghiaccio', emoji:'❄️', items:[
     {id:'neve', e:'❄️'},{id:'pupazzo_neve', e:'⛄'},
     {id:'ghiacciolo', e:'🧊'},{id:'slitta', e:'🛷'},{id:'renna', e:'🦌'},
-    {id:'guanto', e:'🧤'},{id:'sciarpa', e:'🧣'},{id:'castello', e:'🏰'}
+    {id:'guanto', e:'🧤'},{id:'sciarpa', e:'🧣'},{id:'castello', e:'🏰'},
+    {id:'orso_polare', e:'🐻‍❄️'},{id:'pinguino', e:'🐧'},{id:'montagna_innevata', e:'🏔️'}
   ]},
   {id:'cielo', emoji:'☀️', items:[
     {id:'sole', e:'☀️'},{id:'luna', e:'🌙'},{id:'stella', e:'⭐'},{id:'nuvola', e:'☁️'},
-    {id:'arcobaleno', e:'🌈'},{id:'pioggia', e:'🌧️'},{id:'fulmine', e:'⚡'}
+    {id:'arcobaleno', e:'🌈'},{id:'pioggia', e:'🌧️'},{id:'fulmine', e:'⚡'},
+    {id:'stella_cadente', e:'🌠'},{id:'tramonto', e:'🌅'}
   ]},
   {id:'unicorni', emoji:'🦄', items:[
     {id:'unicorno', e:'🦄'},{id:'arcobaleno', e:'🌈'},{id:'stella', e:'✨'},{id:'cuore', e:'💖'},
-    {id:'castello', e:'🏰'},{id:'fiore', e:'🌸'},{id:'nuvola', e:'☁️'}
+    {id:'castello', e:'🏰'},{id:'fiore', e:'🌸'},{id:'nuvola', e:'☁️'},
+    {id:'diamante', e:'💎'},{id:'cavallo', e:'🐴'}
   ]},
   {id:'colori', emoji:'🎨', items:[
     {id:'rosso', e:'❤️'},{id:'blu', e:'💙'},{id:'giallo', e:'💛'},{id:'verde', e:'💚'},
-    {id:'viola', e:'💜'},{id:'arancione', e:'🧡'},{id:'nero', e:'🖤'},{id:'bianco', e:'🤍'}
+    {id:'viola', e:'💜'},{id:'arancione', e:'🧡'},{id:'nero', e:'🖤'},{id:'bianco', e:'🤍'},
+    {id:'marrone', e:'🤎'},{id:'rosa_colore', e:'🩷'}
   ]},
   {id:'numeri', emoji:'🔢', items:[
     {id:'n1', e:'1️⃣'},{id:'n2', e:'2️⃣'},{id:'n3', e:'3️⃣'},{id:'n4', e:'4️⃣'},
     {id:'n5', e:'5️⃣'},{id:'n6', e:'6️⃣'},{id:'n7', e:'7️⃣'},{id:'n8', e:'8️⃣'},
     {id:'n9', e:'9️⃣'},{id:'n10', e:'🔟'}
   ]},
-  {id:'lettere', emoji:'🔤', items:[
-    {w:'a di ape', e:'🐝', accepts:['a','ape','a di ape']},
-    {w:'b di balena', e:'🐳', accepts:['b','balena','b di balena']},
-    {w:'c di cane', e:'🐶', accepts:['c','cane','c di cane']},
-    {w:'d di delfino', e:'🐬', accepts:['d','delfino','d di delfino']},
-    {w:'e di elefante', e:'🐘', accepts:['e','elefante','e di elefante']},
-    {w:'f di fiore', e:'🌸', accepts:['f','fiore','f di fiore']},
-    {w:'g di gatto', e:'🐱', accepts:['g','gatto','g di gatto']},
-    {w:'l di leone', e:'🦁', accepts:['l','leone','l di leone']},
-    {w:'o di orso', e:'🐻', accepts:['o','orso','o di orso']},
-    {w:'p di pesce', e:'🐟', accepts:['p','pesce','p di pesce']}
-  ]},
+  {id:'lettere', emoji:'🔤', items: LETTERE_ITEMS},
   {id:'fiori', emoji:'🌸', items:[
     {id:'rosa_fiore', e:'🌹'},{id:'girasole', e:'🌻'},{id:'tulipano', e:'🌷'},{id:'margherita', e:'🌼'},
-    {id:'fiore_ciliegio', e:'🌸'},{id:'trifoglio', e:'☘️'}
+    {id:'fiore_ciliegio', e:'🌸'},{id:'trifoglio', e:'☘️'},
+    {id:'ibisco', e:'🌺'},{id:'loto', e:'🪷'},{id:'fiore_bianco', e:'💮'}
   ]},
   {id:'principesse', emoji:'👸', items:[
     {id:'principessa', e:'👸'},{id:'principe', e:'🤴'},{id:'corona', e:'👑'},{id:'castello', e:'🏰'},
-    {id:'bacchetta_magica', e:'🪄'},{id:'cavallo', e:'🐴'}
+    {id:'bacchetta_magica', e:'🪄'},{id:'cavallo', e:'🐴'},
+    {id:'anello', e:'💍'},{id:'vestito', e:'👗'}
   ]},
   {id:'dinosauri', emoji:'🦕', items:[
     {id:'dinosauro', e:'🦕'},{id:'tirannosauro', e:'🦖'},
-    {id:'uovo', e:'🥚'},{id:'osso', e:'🦴'},{id:'vulcano', e:'🌋'},{id:'albero', e:'🌴'}
+    {id:'uovo', e:'🥚'},{id:'osso', e:'🦴'},{id:'vulcano', e:'🌋'},{id:'albero', e:'🌴'},
+    {id:'fossile', e:'🪨'},{id:'impronta', e:'👣'}
   ]},
   {id:'frasi', emoji:'🧩', items: SENTENCES}
 ];
 
 const PRAISE_I18N = {
-  it:['Bravissima!', 'Brava!', 'Ben fatto!', 'Evviva!', 'Che brava!', 'Molto bene!', 'Ottimo lavoro!', 'Perfetto!'],
+  it:{
+    f:['Bravissima!', 'Brava!', 'Ben fatto!', 'Evviva!', 'Che brava!', 'Molto bene!', 'Ottimo lavoro!', 'Perfetto!'],
+    m:['Bravissimo!', 'Bravo!', 'Ben fatto!', 'Evviva!', 'Che bravo!', 'Molto bene!', 'Ottimo lavoro!', 'Perfetto!']
+  },
   en:['Great job!', 'Well done!', 'Nice work!', 'Hooray!', 'You did it!', 'Very good!', 'Excellent!', 'Perfect!'],
   sv:['Bra jobbat!', 'Vad duktig du är!', 'Toppen!', 'Hurra!', 'Du klarade det!', 'Mycket bra!', 'Utmärkt!', 'Perfekt!'],
   fr:['Bravo!', 'Bien joué!', 'Bien fait!', 'Youpi!', 'Tu as réussi!', 'Très bien!', 'Excellent!', 'Parfait!'],
-  ar:['أحسنتِ!', 'ممتاز!', 'عمل رائع!', 'يا سلام!', 'لقد نجحتِ!', 'جيد جداً!', 'رائع!', 'مثالي!']
+  ar:{
+    f:['أحسنتِ!', 'ممتاز!', 'عمل رائع!', 'يا سلام!', 'لقد نجحتِ!', 'جيد جداً!', 'رائع!', 'مثالي!'],
+    m:['أحسنتَ!', 'ممتاز!', 'عمل رائع!', 'يا سلام!', 'لقد نجحتَ!', 'جيد جداً!', 'رائع!', 'مثالي!']
+  }
 };
 const RETRY_I18N = {
-  it:['Riprova, ce la fai!', 'Quasi! Un altro tentativo!', 'Dai che ci sei vicina!'],
+  it:{
+    f:['Riprova, ce la fai!', 'Quasi! Un altro tentativo!', 'Dai che ci sei vicina!'],
+    m:['Riprova, ce la fai!', 'Quasi! Un altro tentativo!', 'Dai che ci sei vicino!']
+  },
   en:['Try again, you can do it!', 'So close! One more try!', 'Come on, you\'re almost there!'],
   sv:['Försök igen, du klarar det!', 'Så nära! Ett försök till!', 'Kom igen, du är nästan där!'],
   fr:['Réessaie, tu peux le faire!', 'Presque! Encore un essai!', 'Allez, tu y es presque!'],
-  ar:['حاولي مرة أخرى، تستطيعين!', 'اقتربتِ! حاولي مرة أخرى!', 'هيا، أنتِ قريبة جداً!']
+  ar:{
+    f:['حاولي مرة أخرى، تستطيعين!', 'اقتربتِ! حاولي مرة أخرى!', 'هيا، أنتِ قريبة جداً!'],
+    m:['حاول مرة أخرى، تستطيع!', 'اقتربتَ! حاول مرة أخرى!', 'هيا، أنتَ قريب جداً!']
+  }
 };
-function PRAISE(){ return PRAISE_I18N[L()] || PRAISE_I18N.it; }
-function RETRY(){ return RETRY_I18N[L()] || RETRY_I18N.it; }
+function playerGender(who){ return who === 'papa' ? 'm' : 'f'; }
+function PRAISE(gender){
+  const entry = PRAISE_I18N[L()] || PRAISE_I18N.it;
+  return Array.isArray(entry) ? entry : (entry[gender] || entry.f);
+}
+function RETRY(gender){
+  const entry = RETRY_I18N[L()] || RETRY_I18N.it;
+  return Array.isArray(entry) ? entry : (entry[gender] || entry.f);
+}
 
 
 /* ================= STATE ================= */
@@ -583,7 +624,7 @@ const state = {
     childName: 'Valeria', childPhoto: null,
     mammaName: 'Mamma', mammaPhoto: null, mammaEnabled: true,
     papaName: 'Papà', papaPhoto: null, papaEnabled: false,
-    challengeMode: false, forcedMode: 'choice', lang: 'it'
+    challengeMode: false, forcedMode: 'voice', lang: 'it'
   }),
   currentCategory: null,
   currentIndex: 0,
@@ -1071,14 +1112,16 @@ function nextItem(correct){
   }
 }
 
-function celebrate(cb){
+function celebrate(item, cb){
   state.celebrating = true;
   const app = document.getElementById('app');
-  const praiseList = PRAISE();
+  const praiseList = PRAISE(playerGender(state.turn));
   const praise = praiseList[Math.floor(Math.random()*praiseList.length)];
   const overlay = document.createElement('div');
   overlay.className = 'celebrate-overlay';
   overlay.innerHTML = `
+    <div class="celebrate-figure">${item.e}</div>
+    <div class="celebrate-word">${esc(phrase(item))}</div>
     <div class="celebrate-emoji">🎉</div>
     <div class="celebrate-text">${praise}</div>
   `;
@@ -1278,7 +1321,7 @@ function handleAction(data){
       const langOverride = cat.id === 'lettere' ? 'it-IT' : undefined;
       startListening(item, (ok, err) => {
         if(ok){
-          celebrate(() => nextItem(true));
+          celebrate(item, () => nextItem(true));
         } else {
           state.voiceFails++;
           if(state.voiceFails >= 2){
@@ -1286,7 +1329,7 @@ function handleAction(data){
             render();
           } else {
             playSoftBlip();
-            const retryList = RETRY();
+            const retryList = RETRY(playerGender(state.turn));
             speak(retryList[Math.floor(Math.random()*retryList.length)]);
             render();
           }
@@ -1301,10 +1344,10 @@ function handleAction(data){
       if(normalize(data.word) === normalize(item.w)){
         state.answering = true;
         const langOverride = cat.id === 'lettere' ? 'it-IT' : undefined;
-        speak(phrase(item), {teach:true, langOverride, onEnd: () => celebrate(() => nextItem(true))});
+        speak(phrase(item), {teach:true, langOverride, onEnd: () => celebrate(item, () => nextItem(true))});
       } else {
         playSoftBlip();
-        speak(RETRY()[0]);
+        speak(RETRY(playerGender(state.turn))[0]);
       }
       break;
     }
