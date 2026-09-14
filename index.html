@@ -514,8 +514,16 @@ const SENTENCES = [
 ];
 
 /* ================= CATEGORIES ================= */
-const LETTERE_ITEMS = ['a','b','c','d','e','f','g','h','i','l','m','n','o','p','q','r','s','t','u','v','z']
-  .map(l => ({w:l, e: l.toUpperCase() + ' ' + l}));
+const LETTER_NAMES_IT = {
+  a:'a', b:'bi', c:'ci', d:'di', e:'e', f:'effe', g:'gi', h:'acca', i:'i',
+  l:'elle', m:'emme', n:'enne', o:'o', p:'pi', q:'cu', r:'erre', s:'esse',
+  t:'ti', u:'u', v:'vu', z:'zeta'
+};
+const LETTERE_ITEMS = Object.keys(LETTER_NAMES_IT).map(l => ({
+  w: l,
+  e: l.toUpperCase() + ' ' + l,
+  accepts: [LETTER_NAMES_IT[l], l]
+}));
 
 const CATEGORIES = [
   {id:'animali', emoji:'🦁', items:[
