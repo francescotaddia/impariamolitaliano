@@ -759,16 +759,6 @@ function effectiveMode(){
   return 'choice';
 }
 
-function showVoiceDebug(text){
-  let panel = document.getElementById('voiceDebugTmp');
-  if(!panel){
-    panel = document.createElement('div');
-    panel.id = 'voiceDebugTmp';
-    panel.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#0033CC;color:#fff;font-family:monospace;font-weight:700;font-size:16px;padding:10px;z-index:999999;border-top:6px solid cyan;white-space:pre-wrap;pointer-events:none;max-height:35vh;overflow:auto;';
-    document.body.appendChild(panel);
-  }
-  panel.textContent = text;
-}
 function startListening(item, onDone, langOverride){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){ onDone(false, 'unsupported'); return; }
@@ -789,7 +779,6 @@ function startListening(item, onDone, langOverride){
       done = true;
       state.listening = false;
       const ok = alts.some(a => matches(a, item));
-      showVoiceDebug('VOICE DEBUG (finale)\ncercavo: "' + item.w + '" (accetta: ' + (item.accepts||[item.w]).join(', ') + ')\nho sentito: ' + alts.map(a=>'"'+a+'"').join(' | ') + '\nrisultato: ' + (ok?'CORRETTO':'non corrisponde'));
       onDone(ok, null);
     } else {
       bestInterim = alts;
@@ -799,14 +788,12 @@ function startListening(item, onDone, langOverride){
     if(done) return;
     done = true;
     state.listening = false;
-    showVoiceDebug('VOICE DEBUG\ncercavo: "' + item.w + '"\nERRORE: ' + e.error);
     onDone(false, e.error);
   };
   rec.onend = () => {
     if(!done){
       state.listening = false;
       const ok = bestInterim.some(a => matches(a, item));
-      showVoiceDebug('VOICE DEBUG (provvisorio, mai diventato definitivo)\ncercavo: "' + item.w + '"\nho sentito: ' + (bestInterim.length ? bestInterim.map(a=>'"'+a+'"').join(' | ') : 'NIENTE') + '\nrisultato: ' + (ok?'CORRETTO':'non corrisponde'));
       onDone(ok, ok ? null : 'no-speech');
     }
   };
@@ -1036,7 +1023,7 @@ function renderCategoryStart(catId){
   state.showChoiceFallback = false;
   state.answering = false;
   state.turn = 'child';
-  state.quizMode = (state.settings.forcedMode === 'voice' && voiceSupported) ? 'voice' : 'choice';
+  state.quizMode = (catId !== 'lettere' && state.settings.forcedMode === 'voice' && voiceSupported) ? 'voice' : 'choice';
   goto('quiz');
 }
 
