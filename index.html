@@ -232,7 +232,7 @@ canvas#confetti{ position:fixed; inset:0; pointer-events:none; z-index:51;}
 
 <div id="app"></div>
 <canvas id="confetti"></canvas>
-<div id="voiceDebug" style="position:fixed;top:2%;left:2%;right:2%;background:#0033CC;color:#FFFFFF;font-family:monospace;font-weight:700;font-size:18px;padding:16px;z-index:999999;border:6px solid cyan;white-space:pre-wrap;"></div>
+<div id="voiceDebug" style="position:fixed;bottom:0;left:0;right:0;background:#0033CC;color:#FFFFFF;font-family:monospace;font-weight:700;font-size:16px;padding:10px;z-index:999999;border-top:6px solid cyan;white-space:pre-wrap;pointer-events:none;max-height:35vh;overflow:auto;"></div>
 
 <script>
 /* ================= LANGUAGES ================= */
@@ -677,7 +677,7 @@ function speak(text, opts){
     u.rate = opts.excited ? 1.12 : (opts.teach ? 0.95 : 1.02);
     u.pitch = opts.excited ? 1.55 : (opts.teach ? 1.2 : 1.35);
     u.volume = 1;
-    updateVoiceDebug('speak() chiamato con testo: "' + text + '" voce scelta: ' + (v ? v.name : 'NESSUNA (default)'));
+    updateVoiceDebug('speak() chiamato con testo: "' + text + '" voce scelta: ' + (v ? v.name : 'NESSUNA (default)') + ' | click isTrusted=' + window.__lastClickTrusted + ' | speechSynthesis.speaking=' + speechSynthesis.speaking + ' pending=' + speechSynthesis.pending + ' paused=' + speechSynthesis.paused);
     u.onstart = () => updateVoiceDebug('EVENTO onstart ricevuto (sta parlando)');
     u.onend = () => updateVoiceDebug('EVENTO onend ricevuto (finito)');
     u.onerror = (ev) => updateVoiceDebug('EVENTO onerror: ' + ev.error);
@@ -1259,7 +1259,7 @@ function handlePhoto(e, key){
 /* ================= ACTIONS ================= */
 function wireActions(){
   document.querySelectorAll('[data-action]').forEach(el => {
-    el.onclick = () => handleAction(el.dataset);
+    el.onclick = (e) => { window.__lastClickTrusted = e.isTrusted; handleAction(el.dataset); };
   });
 }
 
