@@ -67,7 +67,7 @@ button{ font-family:inherit; }
   transition: transform .12s ease, box-shadow .12s ease;
   outline:none;
 }
-[data-focusable]:focus-visible, [data-focusable].focused{
+[data-focusable]:focus, [data-focusable]:focus-visible, [data-focusable].focused{
   transform: scale(1.06);
   box-shadow: 0 0 0 6px var(--focus-ring), var(--shadow);
   z-index:2;
@@ -232,7 +232,7 @@ canvas#confetti{ position:fixed; inset:0; pointer-events:none; z-index:51;}
 
 <div id="app"></div>
 <canvas id="confetti"></canvas>
-<div id="debugPanel" style="position:fixed;top:5%;left:5%;right:5%;background:#FF0000;color:#FFFFFF;font-family:monospace;font-weight:900;font-size:22px;padding:20px;z-index:999999;border:8px solid yellow;white-space:pre-wrap;">DEBUG v3 - IN ATTESA DI UN TASTO...</div>
+<div id="debugPanel" style="position:fixed;top:5%;left:5%;right:5%;background:#FF0000;color:#FFFFFF;font-family:monospace;font-weight:900;font-size:22px;padding:20px;z-index:999999;border:8px solid yellow;white-space:pre-wrap;">DEBUG v4 - IN ATTESA DI UN TASTO O MOVIMENTO...</div>
 
 <script>
 /* ================= LANGUAGES ================= */
@@ -813,7 +813,11 @@ function currentFocused(){
 }
 function setFocus(el){
   focusables().forEach(f => f.classList.remove('focused'));
-  if(el){ el.classList.add('focused'); el.scrollIntoView({block:'nearest', inline:'nearest'}); }
+  if(el){
+    el.classList.add('focused');
+    el.scrollIntoView({block:'nearest', inline:'nearest'});
+    try{ el.focus({preventScroll:true}); }catch(e){ try{ el.focus(); }catch(e2){} }
+  }
 }
 function moveFocus(dir){
   const all = focusables();
@@ -842,13 +846,24 @@ function moveFocus(dir){
 
 /* ================= DEBUG PANEL (temporaneo) ================= */
 const debugLog = [];
-function logDebugEvent(e){
-  debugLog.unshift(`key="${e.key}" code="${e.code}" keyCode=${e.keyCode}`);
+function pushDebug(line){
+  debugLog.unshift(line);
   if(debugLog.length > 8) debugLog.pop();
   const panel = document.getElementById('debugPanel');
-  if(panel) panel.textContent = 'DEBUG v3 - ULTIMI TASTI (nuovo in alto):\n' + debugLog.join('\n');
+  if(panel) panel.textContent = 'DEBUG v4 - ULTIMI EVENTI (nuovo in alto):\n' + debugLog.join('\n');
 }
-window.addEventListener('keydown', logDebugEvent, true);
+window.addEventListener('keydown', (e) => {
+  pushDebug(`KEYDOWN key="${e.key}" code="${e.code}" keyCode=${e.keyCode}`);
+}, true);
+window.addEventListener('focusin', (e) => {
+  const tag = e.target.tagName;
+  const cls = e.target.className || '';
+  pushDebug(`FOCUSIN <${tag}> class="${cls}"`);
+}, true);
+window.addEventListener('click', (e) => {
+  const tag = e.target.tagName;
+  pushDebug(`CLICK <${tag}>`);
+}, true);
 
 const KEYCODE_ARROWS = {37:'ArrowLeft', 38:'ArrowUp', 39:'ArrowRight', 40:'ArrowDown'};
 let lastNavAt = 0;
